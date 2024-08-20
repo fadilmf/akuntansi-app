@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import ProfileCard from "./ProfileCard";
 import {
@@ -19,114 +21,307 @@ import {
 } from "lucide-react";
 import { group } from "console";
 import Link from "next/link";
+import Image from "next/image";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./ui/accordion";
+import { ScrollArea } from "./ui/scroll-area";
+import { usePathname, useRouter } from "next/navigation";
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, toggleSidebar }) {
+  const router = useRouter();
+  const pathname = usePathname();
   const menuList = [
     {
       items: [
         {
           link: "/",
-          icon: <Home />,
+          // icon: <Home />,
           text: "Home",
         },
       ],
     },
     {
-      group: "Penjualan",
+      group: {
+        text: "Keuangan",
+        // icon: <ShoppingBasket />,
+      },
       items: [
         {
-          link: "/",
-          icon: <ChartArea />,
-          text: "Overview Penjualan",
-        },
-        {
-          link: "/",
-          icon: <Tag />,
-          text: "Tagihan",
+          link: "#",
+          icon: "",
+          text: "Kas & Bank",
         },
         {
           link: "#",
-          icon: <Tag />,
-          text: "Pengiriman",
-        },
-        {
-          link: "#",
-          icon: <Tag />,
-          text: "Pemesanan",
-        },
-        {
-          link: "#",
-          icon: <Tag />,
-          text: "Penawaran",
+          icon: "",
+          text: "Pengajuan Dana",
         },
       ],
     },
     {
-      group: "Pembelian",
+      group: {
+        text: "Penjualan",
+        // icon: <ChartArea />,
+      },
+      items: [
+        {
+          link: "/penjualan",
+          // icon: <ChartArea />,
+          text: "Faktur Penjualan",
+        },
+        {
+          link: "#",
+          // icon: <Tag />,
+          text: "Sales Order",
+        },
+        {
+          link: "#",
+          // icon: <Tag />,
+          text: "Penawaran Harga",
+        },
+      ],
+    },
+    {
+      group: {
+        text: "Pembelian",
+        // icon: <ChartArea />,
+      },
       items: [
         {
           link: "/pembelian",
-          icon: <ChartArea />,
-          text: "Overview Pembelian",
+          // icon: <ChartArea />,
+          text: "Faktur Pembelian",
         },
         {
           link: "#",
-          icon: <Tag />,
-          text: "Tagihan Pembelian",
+          // icon: <Tag />,
+          text: "Order Pembelian",
         },
         {
           link: "#",
-          icon: <Tag />,
-          text: "Pengiriman Pembelian",
+          // icon: <Tag />,
+          text: "Permintaan Pembelian",
+        },
+      ],
+    },
+    {
+      group: {
+        text: "Warehouse",
+        // icon: <ChartArea />,
+      },
+      items: [
+        {
+          link: "#",
+          icon: "",
+          text: "Penerimaan Barang",
         },
         {
           link: "#",
-          icon: <Tag />,
-          text: "Pesanan Pembelian",
+          icon: "",
+          text: "Pengiriman Barang",
         },
         {
           link: "#",
-          icon: <Tag />,
-          text: "Penawaran Pembelian",
+          icon: "",
+          text: "Inventory",
+        },
+      ],
+    },
+    // {
+    //   items: [
+    //     {
+    //       link: "/kontak",
+    //       icon: <IdCard />,
+    //       text: "Kontak",
+    //     },
+    //   ],
+    // },
+    {
+      items: [
+        {
+          link: "#",
+          // icon: <Banknote />,
+          text: "Produk",
         },
       ],
     },
     {
       items: [
         {
-          link: "/kontak",
-          icon: <IdCard />,
+          link: "#",
+          // icon: <Banknote />,
+          text: "Payroll",
+        },
+      ],
+    },
+    {
+      items: [
+        {
+          link: "#",
+          // icon: <Banknote />,
+          text: "Asset Tetap",
+        },
+      ],
+    },
+    {
+      items: [
+        {
+          link: "#",
+          // icon: <Banknote />,
+          text: "Laporan",
+        },
+      ],
+    },
+    // {
+    //   group: {
+    //     text: "Data Master",
+    //     // icon: <ChartArea />,
+    //   },
+    //   items: [
+    //     {
+    //       link: "#",
+    //       // icon: <Banknote />,
+    //       text: "Chart of Account",
+    //     },
+    //     {
+    //       link: "#",
+    //       // icon: <Banknote />,
+    //       text: "Kontak",
+    //     },
+    //     {
+    //       link: "#",
+    //       // icon: <Banknote />,
+    //       text: "Pajak",
+    //     },
+    //     {
+    //       link: "#",
+    //       // icon: <Banknote />,
+    //       text: "Kode Proyek",
+    //     },
+    //   ],
+    // },
+    // {
+    //   items: [
+    //     {
+    //       link: "#",
+    //       text: "Pengaturan",
+    //     },
+    //   ],
+    // },
+  ];
+
+  const bottomMenuList = [
+    {
+      group: {
+        text: "Data Master",
+        // icon: <ChartArea />,
+      },
+      items: [
+        {
+          link: "#",
+          // icon: <Banknote />,
+          text: "Chart of Account",
+        },
+        {
+          link: "#",
+          // icon: <Banknote />,
           text: "Kontak",
         },
-      ],
-    },
-    {
-      items: [
         {
-          link: "/",
-          icon: <Banknote />,
-          text: "Kas & Bank",
+          link: "#",
+          // icon: <Banknote />,
+          text: "Pajak",
+        },
+        {
+          link: "#",
+          // icon: <Banknote />,
+          text: "Kode Proyek",
         },
       ],
     },
     {
       items: [
         {
-          link: "/",
-          icon: <Home />,
-          text: "Home",
+          link: "#",
+          text: "Pengaturan",
         },
       ],
     },
   ];
   return (
-    <div className="fixed flex bg-white flex-col w-[300px] min-w-[300px] border-r min-h-screen p-4 gap-4">
-      <div className="font-bold text-4xl flex justify-center py-2">Logo</div>
-      <div className="grow h-full">
+    <div
+      className={`fixed flex flex-col w-[300px] min-w-[300px] border-r min-h-screen p-4 gap-4 bg-white transition-transform transform ${
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      } lg:translate-x-0`}
+    >
+      <button
+        onClick={toggleSidebar}
+        className="lg:hidden self-end text-2xl mb-4"
+      >
+        ✕
+      </button>
+      <Link href={"/"} className="font-bold text-4xl flex justify-center py-2">
+        <Image src={"/logo_web.png"} alt="logo" width={200} height={200} />
+      </Link>
+      <ScrollArea className="h-96 grow">
+        <Accordion type="multiple">
+          {menuList.map((menu, key) =>
+            menu.group ? (
+              <AccordionItem
+                key={key}
+                value={`item-${key}`}
+                className="border-0"
+              >
+                <AccordionTrigger className="hover:bg-gray-100 px-4 py-2 rounded-md hover:no-underline">
+                  <span className="flex gap-2">
+                    {/* {menu.group.icon} */}
+                    {menu.group.text}
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent>
+                  {menu.items.map((option, optionKey) => (
+                    <Link
+                      key={optionKey}
+                      href={option.link}
+                      className={`flex gap-2 px-4 py-2 cursor-pointer rounded-md ${
+                        pathname === option.link
+                          ? "bg-gray-200 text-blue-600"
+                          : "hover:bg-gray-100"
+                      }`}
+                    >
+                      {/* {option.icon} */}
+                      <span>{option.text}</span>
+                    </Link>
+                  ))}
+                </AccordionContent>
+              </AccordionItem>
+            ) : (
+              menu.items.map((option, optionKey) => (
+                <Link
+                  key={optionKey}
+                  href={option.link}
+                  className={`flex items-center gap-2 px-4 py-2 cursor-pointer rounded-md ${
+                    pathname === option.link
+                      ? "bg-gray-200 text-blue-600"
+                      : "hover:bg-gray-100"
+                  }`}
+                >
+                  {/* {option.icon} */}
+                  <span>{option.text}</span>
+                </Link>
+              ))
+            )
+          )}
+        </Accordion>
+      </ScrollArea>
+
+      {/* <ScrollArea className="h-96 grow">
         <Command style={{ overflow: "visible" }}>
-          {/* <CommandInput placeholder="Type a command or search..." /> */}
           <CommandList style={{ overflow: "visible" }}>
-            {/* <CommandEmpty>No results found.</CommandEmpty> */}
             {menuList.map((menu, key) => (
               <CommandGroup key={key} heading={menu.group}>
                 {menu.items.map((option, optionKey) => (
@@ -145,8 +340,58 @@ export default function Sidebar() {
             ))}
           </CommandList>
         </Command>
+      </ScrollArea> */}
+      <div>
+        <Accordion type="single" collapsible>
+          {bottomMenuList.map((menu, key) =>
+            menu.group ? (
+              <AccordionItem
+                key={key}
+                value={`item-${key}`}
+                className="border-0"
+              >
+                <AccordionTrigger className="hover:bg-gray-100 px-4 py-2 rounded-md hover:no-underline">
+                  <span className="flex gap-2">
+                    {/* {menu.group.icon} */}
+                    {menu.group.text}
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent>
+                  {menu.items.map((option, optionKey) => (
+                    <Link
+                      key={optionKey}
+                      href={option.link}
+                      className={`flex gap-2 px-4 py-2 cursor-pointer rounded-md ${
+                        pathname === option.link
+                          ? "bg-gray-200 text-blue-600"
+                          : "hover:bg-gray-100"
+                      }`}
+                    >
+                      {/* {option.icon} */}
+                      <span>{option.text}</span>
+                    </Link>
+                  ))}
+                </AccordionContent>
+              </AccordionItem>
+            ) : (
+              menu.items.map((option, optionKey) => (
+                <Link
+                  key={optionKey}
+                  href={option.link}
+                  className={`flex items-center gap-2 px-4 py-2 cursor-pointer rounded-md ${
+                    pathname === option.link
+                      ? "bg-gray-200 text-blue-600"
+                      : "hover:bg-gray-100"
+                  }`}
+                >
+                  {/* {option.icon} */}
+                  <span>{option.text}</span>
+                </Link>
+              ))
+            )
+          )}
+        </Accordion>
       </div>
-      <ProfileCard />
     </div>
   );
 }

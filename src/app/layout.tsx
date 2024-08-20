@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Fira_Sans, Inter } from "next/font/google";
 import "@/styles/globals.css";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { PageTitleProvider } from "@/contexts/PageTitleContext";
 
 const inter = Inter({ subsets: ["latin"] });
+const firaSans = Fira_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "800"],
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,8 +24,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
+      {/* <body
         className={`${inter.className} flex items-start justify-between bg-slate-50`}
+      > */}
+      <body
+        className={`${inter.className} flex flex-col lg:flex-row bg-slate-50`}
       >
         <ThemeProvider
           attribute="class"
@@ -28,11 +36,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Sidebar />
-          <main className="w-full h-full pl-[300px]">
-            <Navbar />
-            {children}
-          </main>
+          <PageTitleProvider>
+            <Sidebar />
+            <main className="w-full h-full lg:pl-[300px]">
+              <Navbar />
+              <div className="">{children}</div>
+            </main>
+          </PageTitleProvider>
         </ThemeProvider>
       </body>
     </html>
