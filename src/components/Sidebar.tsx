@@ -31,7 +31,7 @@ import {
 import { ScrollArea } from "./ui/scroll-area";
 import { usePathname, useRouter } from "next/navigation";
 
-export default function Sidebar({ isOpen, toggleSidebar }) {
+export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const menuList = [
@@ -253,17 +253,20 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
     },
   ];
   return (
+    // <div
+    //   className={`fixed flex flex-col w-[300px] min-w-[300px] border-r min-h-screen p-4 gap-4 bg-white transition-transform transform ${
+    //     isOpen ? "translate-x-0" : "-translate-x-full"
+    //   } lg:translate-x-0`}
+    // >
     <div
-      className={`fixed flex flex-col w-[300px] min-w-[300px] border-r min-h-screen p-4 gap-4 bg-white transition-transform transform ${
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      } lg:translate-x-0`}
+      className={`fixed flex flex-col w-[300px] min-w-[300px] border-r min-h-screen p-4 gap-4 bg-white transition-transform transform lg:translate-x-0`}
     >
-      <button
+      {/* <button
         onClick={toggleSidebar}
         className="lg:hidden self-end text-2xl mb-4"
       >
         ✕
-      </button>
+      </button> */}
       <Link href={"/"} className="font-bold text-4xl flex justify-center py-2">
         <Image src={"/logo_web.png"} alt="logo" width={200} height={200} />
       </Link>
