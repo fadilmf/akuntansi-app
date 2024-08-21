@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Fira_Sans, Inter } from "next/font/google";
 import "@/styles/globals.css";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/navigation/Sidebar";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { PageTitleProvider } from "@/contexts/PageTitleContext";
