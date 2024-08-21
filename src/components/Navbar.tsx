@@ -20,7 +20,7 @@ import { ModeToggle } from "./ModeToggle";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { usePageTitle } from "@/contexts/PageTitleContext";
-import Sidebar from "./Sidebar";
+import Sidebar from "./navigation/Sidebar";
 
 // export default function Navbar() {
 //   const { setTitle, title } = usePageTitle();
@@ -86,7 +86,7 @@ export default function Navbar({ isSidebarOpen, toggleSidebar }: any) {
           <Button className="" variant={"outline"} onClick={toggleSidebar}>
             <Menu size={24} />
           </Button>
-          <h1 className="text-xl font-bold">{title}</h1>
+          <h1 className="text-2xl ml-2 font-bold">{title}</h1>
         </div>
         <div className="hidden md:flex gap-2 mt-4 lg:mt-0">
           <h2 className="font-semibold">Yedi Casman -</h2>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import ProfileCard from "./ProfileCard";
+import ProfileCard from "../ProfileCard";
 import {
   Command,
   CommandEmpty,
@@ -10,7 +10,7 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "./ui/command";
+} from "../ui/command";
 import {
   Banknote,
   ChartArea,
@@ -27,8 +27,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "./ui/accordion";
-import { ScrollArea } from "./ui/scroll-area";
+} from "../ui/accordion";
+import { ScrollArea } from "../ui/scroll-area";
 import { usePathname, useRouter } from "next/navigation";
 
 export default function Sidebar({ isOpen, toggleSidebar }: any) {
@@ -281,14 +281,14 @@ export default function Sidebar({ isOpen, toggleSidebar }: any) {
       <div className="flex gap-2 justify-between items-center">
         <Link
           href={"/"}
-          className="font-bold text-4xl flex justify-center py-2"
+          className="font-bold text-4xl flex justify-center py-2 w-full"
           onClick={() => toggleSidebar(false)}
         >
           <Image src={"/logo_web.png"} alt="logo" width={200} height={200} />
         </Link>
         <button
           onClick={toggleSidebar}
-          className="md:hidden self-end text-2xl mb-4"
+          className="md:hidden font-bold text-xl flex justify-center "
         >
           ✕
         </button>
