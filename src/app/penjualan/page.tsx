@@ -431,12 +431,8 @@ export default function PenjualanPage() {
                   <th className="border border-gray-300 p-2">Date</th>
                   <th className="border border-gray-300 p-2">Customer</th>
                   <th className="border border-gray-300 p-2">Subject</th>
-                  <th className="border border-gray-300 p-2 text-right">
-                    Jumlah
-                  </th>
-                  <th className="border border-gray-300 p-2 text-right">
-                    Tagihan
-                  </th>
+                  <th className="border border-gray-300 p-2">Jumlah</th>
+                  <th className="border border-gray-300 p-2">Tagihan</th>
                   <th className="border border-gray-300 p-2">Status</th>
                 </tr>
               </thead>
