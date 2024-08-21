@@ -63,22 +63,32 @@ import Sidebar from "./Sidebar";
 //   );
 // }
 
-export default function Navbar() {
+export default function Navbar({ isSidebarOpen, toggleSidebar }: any) {
   const { title } = usePageTitle();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  // const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
-    <div>
-      <div className="border-b p-6 bg-white flex flex-col lg:flex-row justify-between items-start lg:items-center">
+    <div className="">
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+
+      <div
+        className={`fixed top-0 border-b p-6 bg-white z-0 flex md:flex-row justify-between items-start lg:items-center transition-all duration-300 ${
+          isSidebarOpen ? "hidden lg:flex lg:ml-[300px]" : "lg:ml-0 w-full"
+        }`}
+        style={{
+          width: isSidebarOpen ? "calc(100% - 300px)" : "100%",
+          marginLeft: isSidebarOpen ? "300px" : "0",
+        }}
+      >
         <div className="flex gap-2 items-center">
-          {/* <Button variant={"secondary"} onClick={toggleSidebar}>
+          <Button className="" variant={"outline"} onClick={toggleSidebar}>
             <Menu size={24} />
-          </Button> */}
+          </Button>
           <h1 className="text-xl font-bold">{title}</h1>
         </div>
-        <div className="flex gap-2 mt-4 lg:mt-0">
+        <div className="hidden md:flex gap-2 mt-4 lg:mt-0">
           <h2 className="font-semibold">Yedi Casman -</h2>
           <DropdownMenu>
             <DropdownMenuTrigger className="flex gap-2">
@@ -95,9 +105,28 @@ export default function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      </div>
 
-      {/* <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} /> */}
+        <div className="md:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex gap-2">
+              <div className="p-2 rounded-full border">
+                <User />
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>
+                <h2 className="font-semibold">Yedi Casman</h2>
+                <span className="italic">Director</span>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Billing</DropdownMenuItem>
+              <DropdownMenuItem>Team</DropdownMenuItem>
+              <DropdownMenuItem>Subscription</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
     </div>
   );
 }

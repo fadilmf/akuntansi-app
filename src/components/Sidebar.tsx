@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ProfileCard from "./ProfileCard";
 import {
   Command,
@@ -31,9 +31,29 @@ import {
 import { ScrollArea } from "./ui/scroll-area";
 import { usePathname, useRouter } from "next/navigation";
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, toggleSidebar }: any) {
   const router = useRouter();
   const pathname = usePathname();
+
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+
+    handleResize(); // Set initial state based on screen size
+    window.addEventListener("resize", handleResize);
+
+    if (isDesktop) {
+      toggleSidebar(true);
+    } else {
+      toggleSidebar(false);
+    }
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isDesktop]);
+
   const menuList = [
     {
       items: [
@@ -253,23 +273,26 @@ export default function Sidebar() {
     },
   ];
   return (
-    // <div
-    //   className={`fixed flex flex-col w-[300px] min-w-[300px] border-r min-h-screen p-4 gap-4 bg-white transition-transform transform ${
-    //     isOpen ? "translate-x-0" : "-translate-x-full"
-    //   } lg:translate-x-0`}
-    // >
     <div
-      className={`fixed flex flex-col w-[300px] min-w-[300px] border-r min-h-screen p-4 gap-4 bg-white transition-transform transform lg:translate-x-0`}
+      className={`fixed z-50 h-screen flex flex-col w-full md:w-[300px] min-w-[300px] border-r min-h-screen p-4 gap-4 bg-white transition-transform transform ${
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      }`}
     >
-      {/* <button
-        onClick={toggleSidebar}
-        className="lg:hidden self-end text-2xl mb-4"
-      >
-        ✕
-      </button> */}
-      <Link href={"/"} className="font-bold text-4xl flex justify-center py-2">
-        <Image src={"/logo_web.png"} alt="logo" width={200} height={200} />
-      </Link>
+      <div className="flex gap-2 justify-between items-center">
+        <Link
+          href={"/"}
+          className="font-bold text-4xl flex justify-center py-2"
+          onClick={() => toggleSidebar(false)}
+        >
+          <Image src={"/logo_web.png"} alt="logo" width={200} height={200} />
+        </Link>
+        <button
+          onClick={toggleSidebar}
+          className="md:hidden self-end text-2xl mb-4"
+        >
+          ✕
+        </button>
+      </div>
       <ScrollArea className="h-96 grow">
         <Accordion type="multiple">
           {menuList.map((menu, key) =>
@@ -295,6 +318,7 @@ export default function Sidebar() {
                           ? "bg-gray-200 text-blue-600"
                           : "hover:bg-gray-100"
                       }`}
+                      onClick={() => toggleSidebar(false)}
                     >
                       {/* {option.icon} */}
                       <span>{option.text}</span>
@@ -312,6 +336,7 @@ export default function Sidebar() {
                       ? "bg-gray-200 text-blue-600"
                       : "hover:bg-gray-100"
                   }`}
+                  onClick={() => toggleSidebar(false)}
                 >
                   {/* {option.icon} */}
                   <span>{option.text}</span>
@@ -369,6 +394,7 @@ export default function Sidebar() {
                           ? "bg-gray-200 text-blue-600"
                           : "hover:bg-gray-100"
                       }`}
+                      onClick={() => toggleSidebar(false)}
                     >
                       {/* {option.icon} */}
                       <span>{option.text}</span>
@@ -386,6 +412,7 @@ export default function Sidebar() {
                       ? "bg-gray-200 text-blue-600"
                       : "hover:bg-gray-100"
                   }`}
+                  onClick={() => toggleSidebar(false)}
                 >
                   {/* {option.icon} */}
                   <span>{option.text}</span>
