@@ -15,33 +15,6 @@ export default function Home() {
       <Card className="p-4 h-screen">
         <h1>Home Page</h1>
       </Card>
-      <Card className="p-4">
-        <h1>Home Page</h1>
-      </Card>
-      <Card className="p-4">
-        <h1>Home Page</h1>
-      </Card>
-      <Card className="p-4">
-        <h1>Home Page</h1>
-      </Card>
-      <Card className="p-4">
-        <h1>Home Page</h1>
-      </Card>
-      <Card className="p-4">
-        <h1>Home Page</h1>
-      </Card>
-      <Card className="p-4">
-        <h1>Home Page</h1>
-      </Card>
-      <Card className="p-4">
-        <h1>Home Page</h1>
-      </Card>
-      <Card className="p-4">
-        <h1>Home Page</h1>
-      </Card>
-      <Card className="p-4">
-        <h1>Home Page</h1>
-      </Card>
     </div>
   );
 }
