@@ -61,12 +61,12 @@ export const menuList = [
           text: "Faktur Pembelian",
         },
         {
-          link: "#",
+          link: "/order-pembelian",
           // icon: <Tag />,
           text: "Order Pembelian",
         },
         {
-          link: "#",
+          link: "/permintaan-pembelian",
           // icon: <Tag />,
           text: "Permintaan Pembelian",
         },
