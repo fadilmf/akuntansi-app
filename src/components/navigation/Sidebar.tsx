@@ -57,7 +57,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: any) {
 
   return (
     <div
-      className={`fixed z-50 h-screen flex flex-col w-full md:w-[300px] min-w-[300px] border-r min-h-screen p-4 gap-4 bg-white transition-transform transform ${
+      className={`fixed z-50 h-screen flex flex-col w-full lg:w-[300px] min-w-[300px] border-r min-h-screen p-4 gap-4 bg-white transition-transform transform ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       }`}
     >
@@ -71,7 +71,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: any) {
         </Link>
         <button
           onClick={toggleSidebar}
-          className="md:hidden font-bold text-xl flex justify-center "
+          className="lg:hidden font-bold text-xl flex justify-center "
         >
           ✕
         </button>

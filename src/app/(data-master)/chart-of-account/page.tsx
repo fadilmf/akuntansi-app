@@ -36,7 +36,7 @@ export default function ChartOfAccountPage() {
     <div className="p-4">
       <Card className="p-4">
         <Tabs defaultValue="asset" className="w-full">
-          <TabsList>
+          <TabsList className="grid grid-cols-4 lg:grid-cols-8 h-full">
             <TabsTrigger value="asset">Asset</TabsTrigger>
             <TabsTrigger value="liability">Liability</TabsTrigger>
             <TabsTrigger value="equity">Equity</TabsTrigger>
