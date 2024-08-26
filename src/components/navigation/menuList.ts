@@ -186,7 +186,7 @@ export const bottomMenuList = [
       },
       items: [
         {
-          link: "#",
+          link: "/chart-of-account",
           // icon: <Banknote />,
           text: "Chart of Account",
         },
