@@ -14,8 +14,8 @@ const firaSans = Fira_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Abimantara",
-  description: "Akuntansi",
+  title: "Abimantra",
+  description: "Aplikasi Akuntansi",
 };
 
 export default function RootLayout({

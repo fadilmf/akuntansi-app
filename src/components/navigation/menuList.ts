@@ -107,7 +107,7 @@ export const menuList = [
     {
       items: [
         {
-          link: "#",
+          link: "/produk",
           // icon: <Banknote />,
           text: "Produk",
         },
