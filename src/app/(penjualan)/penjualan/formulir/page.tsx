@@ -32,9 +32,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { usePageTitle } from "@/contexts/PageTitleContext";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
-export default function FormulirPenjualanPage() {
+const FormulirPenjualanPage = () => {
   const { setTitle } = usePageTitle();
 
   const router = useRouter();
@@ -458,4 +458,14 @@ export default function FormulirPenjualanPage() {
       </div>
     );
   }
-}
+};
+
+const Page = () => {
+  return (
+    <Suspense>
+      <FormulirPenjualanPage />
+    </Suspense>
+  );
+};
+
+export default Page;
