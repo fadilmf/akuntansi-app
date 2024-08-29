@@ -31,18 +31,22 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { usePageTitle } from "@/contexts/PageTitleContext";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function FormulirPenjualanPage() {
   const { setTitle } = usePageTitle();
 
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const [produkList, setProdukList] = useState([
+  const id = searchParams.get("id");
+
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  const [productList, setProductList] = useState([
     { id: 1, produk: "", deskripsi: "", qty: 1, satuan: "", harga: 0 },
   ]);
-
   const [form, setForm] = useState({
     invoiceNumber: "",
     date: "",
@@ -61,10 +65,10 @@ export default function FormulirPenjualanPage() {
   const [total, setTotal] = useState(0);
 
   const addProduk = () => {
-    setProdukList([
-      ...produkList,
+    setProductList([
+      ...productList,
       {
-        id: produkList.length + 1,
+        id: productList.length + 1,
         produk: "",
         deskripsi: "",
         qty: 1,
@@ -75,15 +79,15 @@ export default function FormulirPenjualanPage() {
   };
 
   const removeProduk = (index: number) => {
-    if (produkList.length > 1) {
-      setProdukList(produkList.filter((_, i) => i !== index));
+    if (productList.length > 1) {
+      setProductList(productList.filter((_, i) => i !== index));
     }
   };
 
   const handleChange = (index: number, field: string, value: any) => {
-    const newList = [...produkList];
+    const newList = [...productList];
     newList[index] = { ...newList[index], [field]: value };
-    setProdukList(newList);
+    setProductList(newList);
   };
 
   const handleFormChange = (
@@ -93,8 +97,8 @@ export default function FormulirPenjualanPage() {
   };
 
   const calculateTotal = () => {
-    const subTotalValue = produkList.reduce(
-      (acc, produk) => acc + produk.qty * produk.harga,
+    const subTotalValue = productList.reduce(
+      (acc, product) => acc + product.qty * product.harga,
       0
     );
     const ppnValue = subTotalValue * 0.11; // 11% dari sub-total
@@ -108,27 +112,52 @@ export default function FormulirPenjualanPage() {
     setForm((prevForm) => ({ ...prevForm, amount: totalValue }));
   };
 
+  const fetchData = async (id: number) => {
+    // Fetch data berdasarkan ID untuk prefill form saat mode edit
+    try {
+      const response = await fetch(`/api/sales/${id}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Jika ID tidak ditemukan, tampilkan pesan error
+        alert("Data tidak ditemukan.");
+        router.replace("/penjualan"); // Redirect ke halaman utama penjualan
+        return;
+      }
+
+      const { id: _, ...formData } = data;
+
+      setForm(formData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   const handleSubmit = async () => {
     try {
-      const response = await fetch("/api/sales", {
-        method: "POST",
+      const method = isEditMode ? "PUT" : "POST";
+      const endpoint = isEditMode ? `/api/sales/${id}` : "/api/sales";
+
+      console.log("ini data yang dikirim ", form);
+
+      const response = await fetch(endpoint, {
+        method,
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...form,
-          produkList,
+          // productList,
         }),
       });
-      console.log("ini form => ", form);
-      console.log("ini produk => ", produkList);
 
       if (response.ok) {
         // Redirect or show success message
         router.replace("/penjualan");
       } else {
         // Handle error
-        alert("Gagal menyimpan data");
+        const errorData = await response.json();
+        alert(`Gagal menyimpan data: ${errorData.error || "Unknown error"}`);
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -136,9 +165,14 @@ export default function FormulirPenjualanPage() {
   };
 
   useEffect(() => {
+    if (id) {
+      setIsEditMode(true);
+      fetchData(parseInt(id));
+    }
     setTitle("Faktur Penjualan - Formulir");
     calculateTotal();
-  }, [setTitle, produkList]);
+    console.log("pathname = ", id);
+  }, [setTitle, productList]);
 
   return (
     <div className="p-4">
@@ -264,7 +298,7 @@ export default function FormulirPenjualanPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {produkList.map((produk, index) => (
+                  {productList.map((produk, index) => (
                     <tr key={index}>
                       <td className="border border-gray-300 p-2">
                         <Select
@@ -332,7 +366,7 @@ export default function FormulirPenjualanPage() {
                         <Button
                           variant="destructive"
                           onClick={() => removeProduk(index)}
-                          disabled={produkList.length === 1}
+                          disabled={productList.length === 1}
                         >
                           Hapus
                         </Button>
@@ -375,7 +409,7 @@ export default function FormulirPenjualanPage() {
         <CardFooter className="flex flex-col md:flex-row justify-between items-center mt-4">
           <div className="flex gap-2">
             <AlertDialog>
-              <AlertDialogTrigger>
+              <AlertDialogTrigger asChild>
                 <Button className="bg-yellow-300 hover:bg-yellow-400 text-black">
                   Cancel
                 </Button>
