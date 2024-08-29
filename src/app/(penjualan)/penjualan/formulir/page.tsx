@@ -168,13 +168,14 @@ export default function FormulirPenjualanPage() {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     if (id) {
       setIsEditMode(true);
       fetchData(parseInt(id));
     }
     setTitle("Faktur Penjualan - Formulir");
     calculateTotal();
-    console.log("pathname = ", id);
+    setIsLoading(false);
   }, [setTitle]);
 
   if (isLoading) {
