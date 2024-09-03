@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { usePageTitle } from "@/contexts/PageTitleContext";
 import { Product } from "@/types/types";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function ProdukPage() {
@@ -94,7 +95,7 @@ export default function ProdukPage() {
 
       <div className="fixed bottom-5 ml-4 z-20 ">
         <Button className="bg-blue-500 hover:bg-blue-600">
-          Buat Produk Baru
+          <Link href={"/produk/formulir"}>Buat Produk Baru</Link>
         </Button>
       </div>
 
