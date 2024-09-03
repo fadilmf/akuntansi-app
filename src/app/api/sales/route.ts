@@ -1,9 +1,12 @@
 import prisma from "@/lib/prisma";
+import { SalesProduct } from "@/types/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
+
+    console.log("ini data ", data);
 
     if (
       !data.invoiceNumber ||
@@ -32,16 +35,16 @@ export async function POST(req: NextRequest) {
         subject: data.subject,
         notes: data.notes,
         amount: data.amount,
-        // productList: {
-        //   create: data.produkList.map((produk: any) => ({
-        //     name: produk.produk,
-        //     deskripsi: produk.deskripsi,
-        //     qty: produk.qty,
-        //     satuan: produk.satuan,
-        //     harga: produk.harga,
-        //     total: produk.qty * produk.harga,
-        //   })),
-        // },
+        products: {
+          create: data.productList.map((product: any) => ({
+            productId: product.productId,
+            description: product.description,
+            quantity: product.quantity,
+            unit: product.unit,
+            price: product.price,
+            total: product.total,
+          })),
+        },
       },
     });
 

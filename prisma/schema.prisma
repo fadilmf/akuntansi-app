@@ -14,17 +14,17 @@ datasource db {
 }
 
 model Product {
-  id        Int     @id @default(autoincrement())
+  id        Int            @id @default(autoincrement())
   name      String
   category  String?
   unit      String?
   stock     Int?
   status    String?
-  salesList Sales[]
+  salesList SalesProduct[]
 }
 
 model Sales {
-  id               Int       @id @default(autoincrement())
+  id               Int            @id @default(autoincrement())
   invoiceNumber    String
   salesOrderNumber String
   deliveryNumber   String
@@ -37,5 +37,21 @@ model Sales {
   amount           Int?
   bill             Int?
   status           String?
-  productList      Product[]
+  products         SalesProduct[]
+}
+
+model SalesProduct {
+  id          Int     @id @default(autoincrement())
+  salesId     Int
+  productId   Int
+  description String?
+  quantity    Int
+  unit        String?
+  price       Int
+  total       Int
+
+  sales   Sales   @relation(fields: [salesId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([salesId, productId])
 }

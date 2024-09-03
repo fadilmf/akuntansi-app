@@ -33,49 +33,20 @@ import { usePageTitle } from "@/contexts/PageTitleContext";
 import { calculateTotal } from "@/lib/calculateTotal";
 import { Product, SalesProduct } from "@/types/types";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function FormulirPenjualanPage() {
+export default function EditInvoicePage() {
   const { setTitle } = usePageTitle();
 
   const router = useRouter();
+  const params = useParams();
+
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [productList, setProductList] = useState<SalesProduct[]>([
-    {
-      id: 0,
-      salesId: 0,
-      productId: 0,
-      description: "",
-      quantity: 1,
-      unit: "",
-      price: 0,
-      total: 0,
-      product: {
-        id: 0,
-        name: "",
-        salesList: [],
-      },
-      sales: {
-        id: 0,
-        invoiceNumber: "",
-        salesOrderNumber: "",
-        deliveryNumber: "",
-        poNumber: "",
-        date: new Date(),
-        customer: "",
-        termOfPayment: "",
-        subject: "",
-        notes: null,
-        amount: null,
-        bill: null,
-        status: null,
-        productList: [],
-      },
-    },
-  ]);
+  const [productList, setProductList] = useState<SalesProduct[]>([]);
 
   const [form, setForm] = useState({
     invoiceNumber: "",
@@ -91,6 +62,7 @@ export default function FormulirPenjualanPage() {
   });
 
   const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
+
   const [subTotal, setSubTotal] = useState(0);
   const [ppn, setPpn] = useState(0);
   const [total, setTotal] = useState(0);
@@ -161,7 +133,6 @@ export default function FormulirPenjualanPage() {
     }
     newList[index] = { ...newList[index], [field]: value };
     newList[index].total = newList[index].quantity * newList[index].price;
-
     setProductList(newList);
   };
 
@@ -177,33 +148,37 @@ export default function FormulirPenjualanPage() {
       setSubTotal(totals.subTotal);
       setPpn(totals.ppn);
       setTotal(totals.total);
+      const isoDate = new Date(form.date);
 
-      const response = await fetch("/api/sales", {
-        method: "POST",
+      console.log("ini prdouk list dari edit ", productList);
+
+      const response = await fetch(`/api/sales/${id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...form,
-          date: new Date(form.date), // Ensure date format is correct
-          amount: total,
-          productList: productList, // This will be updated in the next request
+          date: isoDate,
+          productList: productList,
         }),
       });
 
       if (response.ok) {
         // const saleData = await response.json();
         // const salesId = saleData.id;
+        // const invoiceId = parseInt(id);
 
         // const cleanedProductList = productList.map(
-        //   ({ product, sales, id, ...rest }) => ({
+        //   ({ product, sales, ...rest }) => ({
         //     ...rest,
+        //     invoiceId,
         //     salesId: salesId, // Add salesId if needed
         //   })
         // );
 
         // const productResponse = await fetch("/api/sales-products", {
-        //   method: "POST",
+        //   method: "PUT",
         //   headers: {
         //     "Content-Type": "application/json",
         //   },
@@ -218,13 +193,14 @@ export default function FormulirPenjualanPage() {
         // } else {
         //   const errorData = await productResponse.json();
         //   alert(
-        //     `Failed to save products: ${errorData.error || "Unknown error"}`
+        //     `Failed to update products: ${errorData.error || "Unknown error"}`
         //   );
         // }
         router.replace("/penjualan");
       } else {
+        // Handle error
         const errorData = await response.json();
-        alert(`Failed to save data: ${errorData.error || "Unknown error"}`);
+        alert(`Gagal menyimpan data: ${errorData.error || "Unknown error"}`);
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -245,13 +221,60 @@ export default function FormulirPenjualanPage() {
     }
   };
 
+  const fetchData = async (id: number) => {
+    // Fetch data berdasarkan ID untuk prefill form saat mode edit
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/sales/${id}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Jika ID tidak ditemukan, tampilkan pesan error
+        alert("Data tidak ditemukan.");
+        router.replace("/penjualan"); // Redirect ke halaman utama penjualan
+        return;
+      }
+
+      const { id: _, products, ...formData } = data;
+
+      setForm(formData);
+      setProductList(data.products);
+
+      const totals = calculateTotal(data.products);
+      setSubTotal(totals.subTotal);
+      setPpn(totals.ppn);
+      setTotal(totals.total);
+
+      setTitle(`Edit - ${formData.invoiceNumber}`);
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   useEffect(() => {
     setIsLoading(true);
-    setTitle("Faktur Penjualan - Formulir");
+    fetchData(parseInt(id));
     fetchProducts();
-    calculateTotal(productList);
+
     setIsLoading(false);
-  }, [setTitle, productList]);
+  }, [setTitle]);
+
+  useEffect(() => {
+    const totals = calculateTotal(productList);
+    setSubTotal(totals.subTotal);
+    setPpn(totals.ppn);
+    setTotal(totals.total);
+  }, [productList]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -278,7 +301,8 @@ export default function FormulirPenjualanPage() {
                   placeholder="Masukkan tanggal"
                   type="date"
                   required
-                  value={form.date}
+                  value={formatDate(form.date)}
+                  //   value={form.date}
                   onChange={handleFormChange}
                 />
               </div>
@@ -385,7 +409,7 @@ export default function FormulirPenjualanPage() {
                   <tbody>
                     {productList.map((product, index) => (
                       <tr key={index}>
-                        <td className="border border-gray-300 p-2">
+                        {/* <td className="border border-gray-300 p-2">
                           <Select
                             onValueChange={(value) => {
                               const selectedProductId = parseInt(value, 10); // Pastikan value di-convert ke number
@@ -405,6 +429,46 @@ export default function FormulirPenjualanPage() {
                               <SelectValue placeholder="Pilih produk" />
                             </SelectTrigger>
                             <SelectContent>
+                              {availableProducts.map((product) => (
+                                <SelectItem
+                                  key={product.id}
+                                  value={product.id.toString()}
+                                >
+                                  {product.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </td> */}
+                        <td className="border border-gray-300 p-2">
+                          <Select
+                            value={product.productId.toString()}
+                            onValueChange={(value) => {
+                              const selectedProductId = parseInt(value, 10); // Pastikan value di-convert ke number
+                              const selectedProduct = availableProducts.find(
+                                (p) => p.id === selectedProductId
+                              );
+                              if (selectedProduct) {
+                                handleChange(
+                                  index,
+                                  "productId",
+                                  selectedProduct.id
+                                );
+                              }
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih produk" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {/* {availableProducts.map((product) => (
+                                <SelectItem
+                                  key={product.id}
+                                  value={product.id.toString()}
+                                >
+                                  {product.name}
+                                </SelectItem>
+                              ))} */}
                               {getAvailableProductsForSelect(index).map(
                                 (product) => (
                                   <SelectItem
@@ -439,6 +503,7 @@ export default function FormulirPenjualanPage() {
                         </td>
                         <td className="border border-gray-300 p-2">
                           <Select
+                            value={product.unit || ""}
                             onValueChange={(value) =>
                               handleChange(index, "unit", value)
                             }

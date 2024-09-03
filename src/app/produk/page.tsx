@@ -4,22 +4,38 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { usePageTitle } from "@/contexts/PageTitleContext";
+import { Product } from "@/types/types";
 import { useEffect, useState } from "react";
-import { data_produk } from "./data-produk";
 
 export default function ProdukPage() {
   const { setTitle } = usePageTitle();
   const [searchTerm, setSearchTerm] = useState("");
+  const [products, setProducts] = useState<Product[]>([]);
 
-  const filteredData = data_produk.filter((produk) => {
-    const matchesProduk = produk.nama_produk
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("/api/products"); // Call the API route
+      if (response.ok) {
+        const data = await response.json();
+        setProducts(data); // Set the fetched products to state
+      } else {
+        console.error("Failed to fetch products");
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  const filteredData = products.filter((product) => {
+    const matchesProduct = product.name
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
-    return matchesProduk;
+    return matchesProduct;
   });
 
   useEffect(() => {
     setTitle("Produk");
+    fetchProducts();
   }, [setTitle]);
   return (
     <>
@@ -51,22 +67,22 @@ export default function ProdukPage() {
                 </tr>
               </thead>
               <tbody>
-                {filteredData.map((produk, index) => (
+                {filteredData.map((product, index) => (
                   <tr key={index}>
                     <td className="border border-gray-300 p-2">
-                      {produk.nama_produk}
+                      {product.name}
                     </td>
                     <td className="border border-gray-300 p-2">
-                      {produk.kategori}
+                      {product.category}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {produk.satuan}
+                      {product.unit}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {produk.stok}
+                      {product.stock}
                     </td>
                     <td className="border border-gray-300 p-2">
-                      {produk.status}
+                      {product.status}
                     </td>
                   </tr>
                 ))}

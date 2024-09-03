@@ -5,64 +5,53 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { usePageTitle } from "@/contexts/PageTitleContext";
+import { Sales } from "@/types/types";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
-export type Payment = {
-  id: number;
-  invoiceNumber: string;
-  date: string;
-  customer: string;
-  subject: string;
-  amount: number;
-  bill: number;
-  status: "open" | "close";
-};
-
 export default function PenjualanPage() {
   const { setTitle } = usePageTitle();
-  const [penjualan, setPenjualan] = useState<Payment[]>([]);
+  const [sales, setSales] = useState<Sales[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
 
-  const fetchPayments = async () => {
+  const fetchSales = async () => {
     try {
       const response = await fetch("/api/sales");
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
-      const data: Payment[] = await response.json();
-      console.log("ini data penjualan: ", data);
-      setPenjualan(data);
+      const data: Sales[] = await response.json();
+      setSales(data);
     } catch (error) {
       console.error("Error fetching payments:", error);
     }
   };
 
-  const filteredData = penjualan.filter((payment) => {
-    const paymentDate = new Date(payment.date);
+  const filteredData = sales.filter((sales) => {
+    const salesDate = new Date(sales.date);
     const dateInRange =
-      (!startDate || paymentDate >= startDate) &&
-      (!endDate || paymentDate <= endDate);
-    const matchesCustomer = payment.customer
+      (!startDate || salesDate >= startDate) &&
+      (!endDate || salesDate <= endDate);
+    const matchesCustomer = sales.customer
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     return dateInRange && matchesCustomer;
   });
 
   const totalJumlah = filteredData.reduce(
-    (acc, payment) => acc + payment.amount,
+    (acc, sale) => acc + (sale.amount ?? 0),
     0
   );
   const totalTagihan = filteredData.reduce(
-    (acc, payment) => acc + payment.bill,
+    (acc, sale) => acc + (sale.bill ?? 0),
     0
   );
 
   useEffect(() => {
     setTitle("Faktur Penjualan");
-    fetchPayments();
+    fetchSales();
   }, [setTitle]);
 
   return (
@@ -100,63 +89,69 @@ export default function PenjualanPage() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="min-w-full border-collapse border border-gray-300">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border border-gray-300 p-2 w-[100px]">
-                    Invoice
-                  </th>
-                  <th className="border border-gray-300 p-2">Date</th>
-                  <th className="border border-gray-300 p-2">Customer</th>
-                  <th className="border border-gray-300 p-2">Subject</th>
-                  <th className="border border-gray-300 p-2">Jumlah</th>
-                  <th className="border border-gray-300 p-2">Tagihan</th>
-                  <th className="border border-gray-300 p-2">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredData.map((payment, index) => (
-                  <tr key={index}>
-                    <td className="border border-gray-300 p-2 font-medium hover:cursor-pointer">
-                      <Link href={`penjualan/formulir?id=${payment.id}`}>
-                        {payment.invoiceNumber}
-                      </Link>
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {new Date(payment.date).toLocaleDateString("id-ID")}
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {payment.customer}
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {payment.subject}
-                    </td>
-                    <td className="border border-gray-300 p-2 text-right">
-                      {payment.amount?.toLocaleString("id-ID", {
-                        style: "decimal",
-                      })}
-                    </td>
-                    <td className="border border-gray-300 p-2 text-right">
-                      {payment.bill === 0 || payment.bill === null
-                        ? "-"
-                        : payment.bill.toLocaleString("id-ID", {
-                            style: "decimal",
-                          })}
-                    </td>
-                    <td
-                      className={`border border-gray-300 p-2 ${
-                        payment.status === "open"
-                          ? "text-red-500"
-                          : "text-green-500"
-                      }`}
-                    >
-                      {/* {payment.status.charAt(0).toUpperCase() +
-                        payment.status.slice(1)} */}
-                    </td>
+            {filteredData.length === 0 ? (
+              <div className="text-center p-4">Data kosong</div>
+            ) : (
+              <table className="min-w-full border-collapse border border-gray-300">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="border border-gray-300 p-2 w-[100px]">
+                      Invoice
+                    </th>
+                    <th className="border border-gray-300 p-2">Date</th>
+                    <th className="border border-gray-300 p-2">Customer</th>
+                    <th className="border border-gray-300 p-2">Subject</th>
+                    <th className="border border-gray-300 p-2">Jumlah</th>
+                    <th className="border border-gray-300 p-2">Tagihan</th>
+                    <th className="border border-gray-300 p-2">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filteredData.map((payment, index) => (
+                    <tr key={index}>
+                      <td className="border border-gray-300 p-2 font-medium hover:cursor-pointer">
+                        <Link href={`penjualan/${payment.id}`}>
+                          {payment.invoiceNumber}
+                        </Link>
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {new Date(payment.date).toLocaleDateString("id-ID")}
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {payment.customer}
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {payment.subject}
+                      </td>
+                      <td className="border border-gray-300 p-2 text-right">
+                        {payment.amount?.toLocaleString("id-ID", {
+                          style: "decimal",
+                        })}
+                      </td>
+                      <td className="border border-gray-300 p-2 text-right">
+                        {payment.bill === 0 ||
+                        payment.bill === null ||
+                        payment.bill === undefined
+                          ? "-"
+                          : payment.bill.toLocaleString("id-ID", {
+                              style: "decimal",
+                            })}
+                      </td>
+                      <td
+                        className={`border border-gray-300 p-2 ${
+                          payment.status === "open"
+                            ? "text-red-500"
+                            : "text-green-500"
+                        }`}
+                      >
+                        {/* {payment.status.charAt(0).toUpperCase() +
+                        payment.status.slice(1)} */}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </Card>
       </div>
