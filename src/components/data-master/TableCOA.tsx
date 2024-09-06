@@ -1,7 +1,4 @@
-import {
-  DataCOA,
-  equity_data,
-} from "@/app/(data-master)/chart-of-account/data-coa";
+import { DataCOA } from "@/app/(main)/(data-master)/chart-of-account/data-coa";
 import React from "react";
 
 export default function TableCOA({ data }: any) {
