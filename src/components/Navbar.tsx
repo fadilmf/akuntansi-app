@@ -102,6 +102,14 @@ export default function Navbar({ isSidebarOpen, toggleSidebar }: any) {
               <DropdownMenuItem>Billing</DropdownMenuItem>
               <DropdownMenuItem>Team</DropdownMenuItem>
               <DropdownMenuItem>Subscription</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={async () => {
+                  // "use server";
+                  // await signOut();
+                }}
+              >
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

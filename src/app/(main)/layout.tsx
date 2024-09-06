@@ -8,10 +8,6 @@ import { PageTitleProvider } from "@/contexts/PageTitleContext";
 import AppLayout from "@/components/AppLayout";
 
 const inter = Inter({ subsets: ["latin"] });
-const firaSans = Fira_Sans({
-  subsets: ["latin"],
-  weight: ["300", "400", "800"],
-});
 
 export const metadata: Metadata = {
   title: "Abimantra",

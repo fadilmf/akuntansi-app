@@ -71,7 +71,7 @@ export default function ProdukPage() {
                 {filteredData.map((product, index) => (
                   <tr key={index}>
                     <td className="border border-gray-300 p-2">
-                      {product.name}
+                      <Link href={`produk/${product.id}`}>{product.name}</Link>
                     </td>
                     <td className="border border-gray-300 p-2">
                       {product.category}
