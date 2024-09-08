@@ -102,7 +102,7 @@ export default function DetailProdukPage() {
           <div className="flex gap-2">
             <div className="flex justify-end mb-10">
               <Link href={`/produk/${id}/edit`}>
-                <Button>Edit Invoice</Button>
+                <Button>Edit Produk</Button>
               </Link>
             </div>
           </div>

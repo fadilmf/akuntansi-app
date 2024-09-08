@@ -29,12 +29,12 @@ export default function PenjualanPage() {
     }
   };
 
-  const filteredData = sales.filter((sales) => {
-    const salesDate = new Date(sales.date);
+  const filteredData = sales.filter((sale) => {
+    const saleDate = new Date(sale.date);
     const dateInRange =
-      (!startDate || salesDate >= startDate) &&
-      (!endDate || salesDate <= endDate);
-    const matchesCustomer = sales.customer
+      (!startDate || saleDate >= startDate) &&
+      (!endDate || saleDate <= endDate);
+    const matchesCustomer = sale.customer
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     return dateInRange && matchesCustomer;

@@ -127,7 +127,9 @@ export default function Navbar({ isSidebarOpen, toggleSidebar }: any) {
                 <span className="italic">Director</span>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <Link href={"/profile"}>
+                <DropdownMenuItem>Profile</DropdownMenuItem>
+              </Link>
               <DropdownMenuItem>Billing</DropdownMenuItem>
               <DropdownMenuItem>Team</DropdownMenuItem>
               <DropdownMenuItem>Subscription</DropdownMenuItem>

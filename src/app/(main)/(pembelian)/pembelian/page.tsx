@@ -5,94 +5,53 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { usePageTitle } from "@/contexts/PageTitleContext";
+import { Sales } from "@/types/types";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
-
-const data: Payment[] = [
-  {
-    invoice: "INV24001",
-    date: "2024-01-03",
-    customer: "Senja Utama Abadi, PT",
-    subject: "Rental Alat Berat",
-    jumlah: 100000000,
-    tagihan: 100000000,
-    status: "open",
-  },
-  {
-    invoice: "INV24002",
-    date: "2024-01-13",
-    customer: "Waskita Karya, PT",
-    subject: "Sparepart Alat Berat",
-    jumlah: 55000000,
-    tagihan: 0,
-    status: "close",
-  },
-  {
-    invoice: "INV24003",
-    date: "2024-04-24",
-    customer: "Guna Nusa Elec, PT",
-    subject: "Alat-alat Listrik",
-    jumlah: 24300000,
-    tagihan: 14300000,
-    status: "open",
-  },
-  {
-    invoice: "INV24004",
-    date: "2024-06-18",
-    customer: "Alamanda Adidaya, PT",
-    subject: "Jasa Installasi Bangunan",
-    jumlah: 1305000000,
-    tagihan: 1265000000,
-    status: "open",
-  },
-  {
-    invoice: "INV24005",
-    date: "2024-06-30",
-    customer: "Indah Kiat Nusantara, PT",
-    subject: "Structure Bangunan Warehouse",
-    jumlah: 98000000,
-    tagihan: 0,
-    status: "close",
-  },
-];
-
-export type Payment = {
-  invoice: string;
-  date: string;
-  customer: string;
-  subject: string;
-  jumlah: number;
-  tagihan: number;
-  status: "open" | "close";
-};
 
 export default function PembelianPage() {
   const { setTitle } = usePageTitle();
+  const [sales, setSales] = useState<Sales[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
 
-  const filteredData = data.filter((payment) => {
-    const paymentDate = new Date(payment.date);
+  const fetchSales = async () => {
+    try {
+      const response = await fetch("/api/sales");
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+      const data: Sales[] = await response.json();
+      setSales(data);
+    } catch (error) {
+      console.error("Error fetching payments:", error);
+    }
+  };
+
+  const filteredData = sales.filter((sale) => {
+    const saleDate = new Date(sale.date);
     const dateInRange =
-      (!startDate || paymentDate >= startDate) &&
-      (!endDate || paymentDate <= endDate);
-    const matchesCustomer = payment.customer
+      (!startDate || saleDate >= startDate) &&
+      (!endDate || saleDate <= endDate);
+    const matchesCustomer = sale.customer
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     return dateInRange && matchesCustomer;
   });
 
   const totalJumlah = filteredData.reduce(
-    (acc, payment) => acc + payment.jumlah,
+    (acc, sale) => acc + (sale.amount ?? 0),
     0
   );
   const totalTagihan = filteredData.reduce(
-    (acc, payment) => acc + payment.tagihan,
+    (acc, sale) => acc + (sale.bill ?? 0),
     0
   );
 
   useEffect(() => {
     setTitle("Faktur Pembelian");
+    fetchSales();
   }, [setTitle]);
 
   return (
@@ -145,8 +104,10 @@ export default function PembelianPage() {
               <tbody>
                 {filteredData.map((payment, index) => (
                   <tr key={index}>
-                    <td className="border border-gray-300 p-2 font-medium">
-                      {payment.invoice}
+                    <td className="border border-gray-300 p-2 font-medium hover:cursor-pointer">
+                      <Link href={`pembelian/${payment.id}`}>
+                        {payment.invoiceNumber}
+                      </Link>
                     </td>
                     <td className="border border-gray-300 p-2">
                       {new Date(payment.date).toLocaleDateString("id-ID")}
@@ -158,14 +119,16 @@ export default function PembelianPage() {
                       {payment.subject}
                     </td>
                     <td className="border border-gray-300 p-2 text-right">
-                      {payment.jumlah.toLocaleString("id-ID", {
+                      {payment.amount?.toLocaleString("id-ID", {
                         style: "decimal",
                       })}
                     </td>
                     <td className="border border-gray-300 p-2 text-right">
-                      {payment.tagihan === 0
+                      {payment.bill === 0 ||
+                      payment.bill === null ||
+                      payment.bill === undefined
                         ? "-"
-                        : payment.tagihan.toLocaleString("id-ID", {
+                        : payment.bill.toLocaleString("id-ID", {
                             style: "decimal",
                           })}
                     </td>
@@ -176,8 +139,8 @@ export default function PembelianPage() {
                           : "text-green-500"
                       }`}
                     >
-                      {payment.status.charAt(0).toUpperCase() +
-                        payment.status.slice(1)}
+                      {/* {payment.status.charAt(0).toUpperCase() +
+                        payment.status.slice(1)} */}
                     </td>
                   </tr>
                 ))}
@@ -189,7 +152,7 @@ export default function PembelianPage() {
 
       <div className="fixed bottom-5 ml-4 z-20">
         <Button className="bg-blue-500 hover:bg-blue-600">
-          Buat Invoice Baru
+          <Link href={"/pembelian/formulir"}>Buat Invoice Baru</Link>
         </Button>
       </div>
 
