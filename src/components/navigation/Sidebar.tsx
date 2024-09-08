@@ -65,7 +65,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: any) {
         <Link
           href={"/"}
           className="font-bold text-4xl flex justify-center py-2 w-full"
-          onClick={() => toggleSidebar(false)}
+          // onClick={() => toggleSidebar(false)}
         >
           <Image src={"/logo_web.png"} alt="logo" width={200} height={200} />
         </Link>
@@ -101,7 +101,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: any) {
                           ? "bg-gray-200 text-blue-600"
                           : "hover:bg-gray-100"
                       }`}
-                      onClick={() => toggleSidebar(false)}
+                      // onClick={() => toggleSidebar(false)}
                     >
                       {/* {option.icon} */}
                       <span>{option.text}</span>
@@ -119,7 +119,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: any) {
                       ? "bg-gray-200 text-blue-600"
                       : "hover:bg-gray-100"
                   }`}
-                  onClick={() => toggleSidebar(false)}
+                  // onClick={() => toggleSidebar(false)}
                 >
                   {/* {option.icon} */}
                   <span>{option.text}</span>
@@ -177,7 +177,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: any) {
                           ? "bg-gray-200 text-blue-600"
                           : "hover:bg-gray-100"
                       }`}
-                      onClick={() => toggleSidebar(false)}
+                      // onClick={() => toggleSidebar(false)}
                     >
                       {/* {option.icon} */}
                       <span>{option.text}</span>
@@ -195,7 +195,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: any) {
                       ? "bg-gray-200 text-blue-600"
                       : "hover:bg-gray-100"
                   }`}
-                  onClick={() => toggleSidebar(false)}
+                  // onClick={() => toggleSidebar(false)}
                 >
                   {/* {option.icon} */}
                   <span>{option.text}</span>
