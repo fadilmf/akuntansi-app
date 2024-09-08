@@ -6,14 +6,14 @@ export default function Profile() {
   //   const { data: session, status } = useSession();
   const router = useRouter();
 
-  if (status === "loading") {
-    return <div>Loading...</div>;
-  }
+  // if (status === "loading") {
+  //   return <div>Loading...</div>;
+  // }
 
-  if (status === "unauthenticated") {
-    router.push("/auth/login");
-    return null;
-  }
+  // if (status === "unauthenticated") {
+  //   router.push("/auth/login");
+  //   return null;
+  // }
 
   const handleEdit = () => {
     // Logika untuk edit profile, bisa diarahkan ke halaman lain atau modal
