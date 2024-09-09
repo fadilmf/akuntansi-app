@@ -78,12 +78,10 @@ export default function FormulirPenjualanPage() {
   ]);
 
   const [form, setForm] = useState({
-    invoiceNumber: "",
-    date: "",
-    salesOrderNumber: "",
-    deliveryNumber: "",
     customer: "",
-    poNumber: "",
+    quoteNumber: "",
+    date: "",
+    customerReference: "",
     termOfPayment: "",
     subject: "",
     notes: "",
@@ -178,7 +176,7 @@ export default function FormulirPenjualanPage() {
       setPpn(totals.ppn);
       setTotal(totals.total);
 
-      const response = await fetch("/api/sales", {
+      const response = await fetch("/api/quotes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -192,36 +190,7 @@ export default function FormulirPenjualanPage() {
       });
 
       if (response.ok) {
-        // const saleData = await response.json();
-        // const salesId = saleData.id;
-
-        // const cleanedProductList = productList.map(
-        //   ({ product, sales, id, ...rest }) => ({
-        //     ...rest,
-        //     salesId: salesId, // Add salesId if needed
-        //   })
-        // );
-
-        // const productResponse = await fetch("/api/sales-products", {
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   body: JSON.stringify({
-        //     products: cleanedProductList,
-        //   }),
-        // });
-
-        // if (productResponse.ok) {
-        //   // Redirect or show success message
-        //   router.replace("/penjualan");
-        // } else {
-        //   const errorData = await productResponse.json();
-        //   alert(
-        //     `Failed to save products: ${errorData.error || "Unknown error"}`
-        //   );
-        // }
-        router.replace("/penjualan");
+        router.replace("/penawaran-harga");
       } else {
         const errorData = await response.json();
         alert(`Failed to save data: ${errorData.error || "Unknown error"}`);
@@ -247,11 +216,18 @@ export default function FormulirPenjualanPage() {
 
   useEffect(() => {
     setIsLoading(true);
-    setTitle("Faktur Penjualan - Formulir");
+    setTitle("Penawaran Harga - Formulir");
     fetchProducts();
     calculateTotal(productList);
     setIsLoading(false);
   }, [setTitle, productList]);
+
+  useEffect(() => {
+    const totals = calculateTotal(productList);
+    setSubTotal(totals.subTotal);
+    setPpn(totals.ppn);
+    setTotal(totals.total);
+  }, [productList]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -261,47 +237,6 @@ export default function FormulirPenjualanPage() {
         <Card className="p-4">
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div>
-                <Label htmlFor="invoiceNumber">Invoice No</Label>
-                <Input
-                  id="invoiceNumber"
-                  placeholder="Masukkan nomor invoice"
-                  required
-                  value={form.invoiceNumber}
-                  onChange={handleFormChange}
-                />
-              </div>
-              <div>
-                <Label htmlFor="date">Tanggal</Label>
-                <Input
-                  id="date"
-                  placeholder="Masukkan tanggal"
-                  type="date"
-                  required
-                  value={form.date}
-                  onChange={handleFormChange}
-                />
-              </div>
-              <div>
-                <Label htmlFor="salesOrderNumber">Sales Order No.</Label>
-                <Input
-                  id="salesOrderNumber"
-                  placeholder="Masukkan nomor sales order"
-                  required
-                  value={form.salesOrderNumber}
-                  onChange={handleFormChange}
-                />
-              </div>
-              <div>
-                <Label htmlFor="deliveryNumber">Pengiriman No.</Label>
-                <Input
-                  id="deliveryNumber"
-                  placeholder="Masukkan nomor pengiriman"
-                  required
-                  value={form.deliveryNumber}
-                  onChange={handleFormChange}
-                />
-              </div>
               <div>
                 <Label htmlFor="customer">Customer</Label>
                 <Select
@@ -321,12 +256,33 @@ export default function FormulirPenjualanPage() {
                 </Select>
               </div>
               <div>
-                <Label htmlFor="poNumber">PO. No.</Label>
+                <Label htmlFor="quoteNumber">Penawaran Harga No.</Label>
                 <Input
-                  id="poNumber"
-                  placeholder="Masukkan nomor PO"
+                  id="quoteNumber"
+                  placeholder="Masukkan nomor penawaran harga"
                   required
-                  value={form.poNumber}
+                  value={form.quoteNumber}
+                  onChange={handleFormChange}
+                />
+              </div>
+              <div>
+                <Label htmlFor="date">Tanggal</Label>
+                <Input
+                  id="date"
+                  placeholder="Masukkan tanggal"
+                  type="date"
+                  required
+                  value={form.date}
+                  onChange={handleFormChange}
+                />
+              </div>
+              <div>
+                <Label htmlFor="customerReference">Referensi Customer:</Label>
+                <Input
+                  id="customerReference"
+                  placeholder="Masukkan referensi customer"
+                  required
+                  value={form.customerReference}
                   onChange={handleFormChange}
                 />
               </div>
@@ -352,11 +308,6 @@ export default function FormulirPenjualanPage() {
                 </Select>
               </div>
               <div>
-                <Label htmlFor="invoice">Invoice diterima:</Label>
-                <Input id="invoice" placeholder="Invoice" />
-              </div>
-
-              <div className="col-span-1 md:col-span-2 lg:col-span-4">
                 <Label htmlFor="subject">Subject</Label>
                 <Input
                   id="subject"

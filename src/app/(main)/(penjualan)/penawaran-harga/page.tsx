@@ -6,23 +6,24 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { usePageTitle } from "@/contexts/PageTitleContext";
 import { Sales } from "@/types/types";
+import { PriceQuote } from "@prisma/client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 export default function PenawaranHargaPage() {
   const { setTitle } = usePageTitle();
-  const [sales, setSales] = useState<Sales[]>([]);
+  const [sales, setSales] = useState<PriceQuote[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
 
-  const fetchSales = async () => {
+  const fetchPriceQuote = async () => {
     try {
-      const response = await fetch("/api/sales");
+      const response = await fetch("/api/quotes");
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
-      const data: Sales[] = await response.json();
+      const data: PriceQuote[] = await response.json();
       setSales(data);
     } catch (error) {
       console.error("Error fetching payments:", error);
@@ -44,14 +45,14 @@ export default function PenawaranHargaPage() {
     (acc, sale) => acc + (sale.amount ?? 0),
     0
   );
-  const totalTagihan = filteredData.reduce(
-    (acc, sale) => acc + (sale.bill ?? 0),
-    0
-  );
+  // const totalTagihan = filteredData.reduce(
+  //   (acc, sale) => acc + (sale.bill ?? 0),
+  //   0
+  // );
 
   useEffect(() => {
     setTitle("Penawaran Harga");
-    fetchSales();
+    fetchPriceQuote();
   }, [setTitle]);
 
   return (
@@ -97,7 +98,6 @@ export default function PenawaranHargaPage() {
                   <th className="border border-gray-300 p-2">Customer</th>
                   <th className="border border-gray-300 p-2">Subject</th>
                   <th className="border border-gray-300 p-2">Jumlah</th>
-                  <th className="border border-gray-300 p-2">Tagihan</th>
                   <th className="border border-gray-300 p-2">Status</th>
                 </tr>
               </thead>
@@ -106,7 +106,7 @@ export default function PenawaranHargaPage() {
                   <tr key={index}>
                     <td className="border border-gray-300 p-2 font-medium hover:cursor-pointer">
                       <Link href={`penawaran-harga/${payment.id}`}>
-                        {payment.deliveryNumber}
+                        {payment.quoteNumber}
                       </Link>
                     </td>
                     <td className="border border-gray-300 p-2">
@@ -123,25 +123,16 @@ export default function PenawaranHargaPage() {
                         style: "decimal",
                       })}
                     </td>
-                    <td className="border border-gray-300 p-2 text-right">
-                      {payment.bill === 0 ||
-                      payment.bill === null ||
-                      payment.bill === undefined
-                        ? "-"
-                        : payment.bill.toLocaleString("id-ID", {
-                            style: "decimal",
-                          })}
-                    </td>
-                    <td
+                    {/* <td
                       className={`border border-gray-300 p-2 ${
-                        payment.status === "open"
+                        payment === "open"
                           ? "text-red-500"
                           : "text-green-500"
                       }`}
                     >
-                      {/* {payment.status.charAt(0).toUpperCase() +
-                        payment.status.slice(1)} */}
-                    </td>
+                      {payment.status.charAt(0).toUpperCase() +
+                        payment.status.slice(1)}
+                    </td> */}
                   </tr>
                 ))}
               </tbody>
@@ -152,12 +143,12 @@ export default function PenawaranHargaPage() {
 
       <div className="fixed bottom-5 ml-4 z-20">
         <Button className="bg-blue-500 hover:bg-blue-600">
-          <Link href={"/penawaran-harga/formulir"}>Buat Invoice Baru</Link>
+          <Link href={"/penawaran-harga/formulir"}>Buat Penawaran Baru</Link>
         </Button>
       </div>
 
       {/* Baris Total di bagian bawah halaman */}
-      <div className="fixed bottom-0 left-0 w-screen p-4 bg-white border-t shadow-md z-10">
+      <div className="fixed bottom-0 left-0 w-screen py-7 px-4 bg-white border-t shadow-md z-10">
         <div className="flex justify-end items-center gap-2">
           <div className="font-semibold">Total Jumlah:</div>
           <div className="text-right font-semibold">
@@ -166,14 +157,12 @@ export default function PenawaranHargaPage() {
             })}
           </div>
         </div>
-        <div className="flex justify-end items-center gap-2">
+        {/* <div className="flex justify-end items-center gap-2">
           <div className="font-semibold">Total Tagihan:</div>
           <div className="text-right font-semibold">
-            {totalTagihan.toLocaleString("id-ID", {
-              style: "decimal",
-            })}
+            <h1>tes</h1>
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );

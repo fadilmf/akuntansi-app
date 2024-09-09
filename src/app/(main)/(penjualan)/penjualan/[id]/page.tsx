@@ -14,6 +14,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { usePageTitle } from "@/contexts/PageTitleContext";
 import { calculateTotal } from "@/lib/calculateTotal";
+import { formatDate } from "@/lib/formatDate";
 import { Product, SalesProduct } from "@/types/types";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -90,14 +91,6 @@ export default function DetailPenjualanPage() {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
   };
 
   const fetchProducts = async () => {
@@ -367,6 +360,11 @@ export default function DetailPenjualanPage() {
         </CardContent>
         <CardFooter className="flex flex-col md:flex-row justify-between items-center mt-4">
           <div className="flex gap-2">
+            <div className="flex justify-end mb-10">
+              <Link href={`/penjualan`}>
+                <Button>Kembali</Button>
+              </Link>
+            </div>
             <div className="flex justify-end mb-10">
               <Link href={`/penjualan/${id}/edit`}>
                 <Button>Edit Invoice</Button>

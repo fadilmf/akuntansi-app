@@ -14,6 +14,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { usePageTitle } from "@/contexts/PageTitleContext";
 import { calculateTotal } from "@/lib/calculateTotal";
+import { formatDate } from "@/lib/formatDate";
 import { Product, SalesProduct } from "@/types/types";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -32,12 +33,10 @@ export default function DetailPenjualanPage() {
   const [productList, setProductList] = useState<SalesProduct[]>([]);
 
   const [form, setForm] = useState({
-    invoiceNumber: "",
-    date: "",
-    salesOrderNumber: "",
-    deliveryNumber: "",
     customer: "",
-    poNumber: "",
+    quoteNumber: "",
+    date: "",
+    customerReference: "",
     termOfPayment: "",
     subject: "",
     notes: "",
@@ -65,7 +64,7 @@ export default function DetailPenjualanPage() {
     // Fetch data berdasarkan ID untuk prefill form saat mode edit
     try {
       setIsLoading(true);
-      const response = await fetch(`/api/sales/${id}`);
+      const response = await fetch(`/api/quotes/${id}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -84,20 +83,12 @@ export default function DetailPenjualanPage() {
       setPpn(totals.ppn);
       setTotal(totals.total);
 
-      setTitle(`Detail - ${formData.deliveryNumber}`);
+      setTitle(`Detail - ${formData.quoteNumber}`);
 
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
   };
 
   const fetchProducts = async () => {
@@ -124,55 +115,6 @@ export default function DetailPenjualanPage() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <Label htmlFor="invoiceNumber">Invoice No</Label>
-              <Input
-                id="invoiceNumber"
-                placeholder="Masukkan nomor invoice"
-                required
-                value={form.invoiceNumber}
-                onChange={handleFormChange}
-                disabled
-              />
-              {/* <h1 className="border border-1 p-2 rounded-lg">
-                {form.invoiceNumber}
-              </h1> */}
-            </div>
-            <div>
-              <Label htmlFor="date">Tanggal</Label>
-              <Input
-                id="date"
-                // placeholder={form.date}
-                type="date"
-                required
-                value={formatDate(form.date)}
-                onChange={handleFormChange}
-                disabled
-              />
-              {/* <h1 className="border border-1 p-2 rounded-lg">{form.date}</h1> */}
-            </div>
-            <div>
-              <Label htmlFor="salesOrderNumber">Sales Order No.</Label>
-              <Input
-                id="salesOrderNumber"
-                placeholder="Masukkan nomor sales order"
-                required
-                value={form.salesOrderNumber}
-                onChange={handleFormChange}
-                disabled
-              />
-            </div>
-            <div>
-              <Label htmlFor="deliveryNumber">Pengiriman No.</Label>
-              <Input
-                id="deliveryNumber"
-                placeholder="Masukkan nomor pengiriman"
-                required
-                value={form.deliveryNumber}
-                onChange={handleFormChange}
-                disabled
-              />
-            </div>
-            <div>
               <Label htmlFor="customer">Customer</Label>
               <Select
                 required
@@ -192,12 +134,35 @@ export default function DetailPenjualanPage() {
               </Select>
             </div>
             <div>
-              <Label htmlFor="poNumber">PO. No.</Label>
+              <Label htmlFor="quoteNumber">Penawaran Harga No.</Label>
               <Input
-                id="poNumber"
-                placeholder="Masukkan nomor PO"
+                id="quoteNumber"
+                placeholder="Masukkan nomor penawaran harga"
                 required
-                value={form.poNumber}
+                value={form.quoteNumber}
+                onChange={handleFormChange}
+                disabled
+              />
+            </div>
+            <div>
+              <Label htmlFor="date">Tanggal</Label>
+              <Input
+                id="date"
+                placeholder="Masukkan tanggal"
+                type="date"
+                required
+                value={formatDate(form.date)}
+                onChange={handleFormChange}
+                disabled
+              />
+            </div>
+            <div>
+              <Label htmlFor="customerReference">Referensi Customer:</Label>
+              <Input
+                id="customerReference"
+                placeholder="Masukkan referensi customer"
+                required
+                value={form.customerReference}
                 onChange={handleFormChange}
                 disabled
               />
@@ -225,11 +190,6 @@ export default function DetailPenjualanPage() {
               </Select>
             </div>
             <div>
-              <Label htmlFor="invoice">Invoice diterima:</Label>
-              <Input id="invoice" placeholder="Invoice" disabled />
-            </div>
-
-            <div className="col-span-1 md:col-span-2 lg:col-span-4">
               <Label htmlFor="subject">Subject</Label>
               <Input
                 id="subject"
@@ -367,6 +327,11 @@ export default function DetailPenjualanPage() {
         </CardContent>
         <CardFooter className="flex flex-col md:flex-row justify-between items-center mt-4">
           <div className="flex gap-2">
+            <div className="flex justify-end mb-10">
+              <Link href={`/penawaran-harga`}>
+                <Button>Kembali</Button>
+              </Link>
+            </div>
             <div className="flex justify-end mb-10">
               <Link href={`/penawaran-harga/${id}/edit`}>
                 <Button>Edit Invoice</Button>

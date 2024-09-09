@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma";
-import { SalesProduct } from "@/types/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -9,12 +8,10 @@ export async function POST(req: NextRequest) {
     console.log("ini data ", data);
 
     if (
-      !data.invoiceNumber ||
-      !data.date ||
-      !data.salesOrderNumber ||
-      !data.deliveryNumber ||
       !data.customer ||
-      !data.poNumber ||
+      !data.quoteNumber ||
+      !data.date ||
+      !data.customerReference ||
       !data.termOfPayment
     ) {
       return NextResponse.json(
@@ -23,14 +20,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const penjualan = await prisma.sale.create({
+    const penawaranHarga = await prisma.priceQuote.create({
       data: {
-        invoiceNumber: data.invoiceNumber,
-        date: new Date(data.date),
-        salesOrderNumber: data.salesOrderNumber,
-        deliveryNumber: data.deliveryNumber,
         customer: data.customer,
-        poNumber: data.poNumber,
+        quoteNumber: data.quoteNumber,
+        date: new Date(data.date),
+        customerReference: data.customerReference,
         termOfPayment: data.termOfPayment,
         subject: data.subject,
         notes: data.notes,
@@ -48,7 +43,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(penjualan, { status: 201 });
+    return NextResponse.json(penawaranHarga, { status: 201 });
   } catch (error) {
     console.error("Error creating penjualan:", error);
     return NextResponse.json(
@@ -60,8 +55,8 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const penjualan = await prisma.sale.findMany();
-    return NextResponse.json(penjualan, { status: 201 });
+    const penawaranHarga = await prisma.priceQuote.findMany();
+    return NextResponse.json(penawaranHarga, { status: 201 });
     // NextResponse.json(
     //   { message: "Semua field yang diperlukan harus diisi" },
     //   { status: 400 }

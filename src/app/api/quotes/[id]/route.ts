@@ -14,7 +14,7 @@ export async function GET(
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
     }
 
-    const sale = await prisma.sale.findFirst({
+    const priceQuote = await prisma.priceQuote.findFirst({
       where: {
         id: parseInt(id),
       },
@@ -23,7 +23,7 @@ export async function GET(
       },
     });
 
-    if (!sale) {
+    if (!priceQuote) {
       return NextResponse.json(
         { error: "Sales data not found" },
         { status: 404 }
@@ -31,7 +31,7 @@ export async function GET(
     }
 
     // Return the sale data as JSON response
-    return NextResponse.json(sale, { status: 200 });
+    return NextResponse.json(priceQuote, { status: 200 });
   } catch (error) {
     console.error("Error fetching sales data:", error);
     return NextResponse.json(

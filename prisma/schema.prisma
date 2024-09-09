@@ -46,17 +46,18 @@ model Account {
 }
 
 model Product {
-  id        Int            @id @default(autoincrement())
-  name      String
-  category  String?
-  unit      String?
-  stock     Int?
-  status    String?
-  salesList SalesProduct[]
+  id           Int            @id @default(autoincrement())
+  name         String
+  category     String?
+  unit         String?
+  stock        Int?
+  status       String?
+  salesList    SaleProduct[]
+  quoteProduct QuoteProduct[]
 }
 
-model Sales {
-  id               Int            @id @default(autoincrement())
+model Sale {
+  id               Int           @id @default(autoincrement())
   invoiceNumber    String
   salesOrderNumber String
   deliveryNumber   String
@@ -69,10 +70,10 @@ model Sales {
   amount           Int?
   bill             Int?
   status           String?
-  products         SalesProduct[]
+  products         SaleProduct[]
 }
 
-model SalesProduct {
+model SaleProduct {
   id          Int     @id @default(autoincrement())
   salesId     Int
   productId   Int
@@ -82,8 +83,41 @@ model SalesProduct {
   price       Int
   total       Int
 
-  sales   Sales   @relation(fields: [salesId], references: [id])
+  sale    Sale    @relation(fields: [salesId], references: [id])
   product Product @relation(fields: [productId], references: [id])
 
   @@unique([salesId, productId])
+}
+
+model PriceQuote {
+  id                Int            @id @default(autoincrement())
+  customer          String
+  quoteNumber       String
+  date              DateTime
+  customerReference String?
+  termOfPayment     String
+  // validUntil        DateTime
+  // status            String
+  subject           String
+  notes             String?
+  amount            Int?
+  // createdAt         DateTime       @default(now())
+  // updatedAt         DateTime       @updatedAt
+  products          QuoteProduct[]
+}
+
+model QuoteProduct {
+  id          Int     @id @default(autoincrement())
+  quoteId     Int
+  productId   Int
+  description String?
+  quantity    Int
+  unit        String?
+  price       Int
+  total       Int
+
+  quote   PriceQuote @relation(fields: [quoteId], references: [id])
+  product Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([quoteId, productId])
 }
