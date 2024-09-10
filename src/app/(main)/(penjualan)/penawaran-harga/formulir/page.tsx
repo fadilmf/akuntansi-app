@@ -356,14 +356,31 @@ export default function FormulirPenjualanPage() {
                               <SelectValue placeholder="Pilih produk" />
                             </SelectTrigger>
                             <SelectContent>
-                              {getAvailableProductsForSelect(index).map(
-                                (product) => (
-                                  <SelectItem
-                                    key={product.id}
-                                    value={product.id.toString()}
+                              {getAvailableProductsForSelect(index).length ===
+                              0 ? (
+                                <div className="p-2 flex flex-col justify-center items-center gap-2">
+                                  <p className="text-xs">
+                                    Tidak ada produk tersedia
+                                  </p>
+                                  <Button
+                                    variant="outline"
+                                    onClick={() =>
+                                      router.push("/produk/formulir")
+                                    }
                                   >
-                                    {product.name}
-                                  </SelectItem>
+                                    Tambah Produk Baru
+                                  </Button>
+                                </div>
+                              ) : (
+                                getAvailableProductsForSelect(index).map(
+                                  (product) => (
+                                    <SelectItem
+                                      key={product.id}
+                                      value={product.id.toString()}
+                                    >
+                                      {product.name}
+                                    </SelectItem>
+                                  )
                                 )
                               )}
                             </SelectContent>
