@@ -13,6 +13,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  ADMIN
+  USER
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -20,6 +25,7 @@ model User {
   emailVerified DateTime? @map("email_verified")
   image         String?
   password      String?
+  role          UserRole  @default(USER)
   accounts      Account[]
 
   @@map("users")
@@ -46,14 +52,15 @@ model Account {
 }
 
 model Product {
-  id           Int            @id @default(autoincrement())
-  name         String
-  category     String?
-  unit         String?
-  stock        Int?
-  status       String?
-  salesList    SaleProduct[]
-  quoteProduct QuoteProduct[]
+  id                Int                 @id @default(autoincrement())
+  name              String
+  category          String?
+  unit              String?
+  stock             Int?
+  status            String?
+  salesList         SaleProduct[]
+  quoteProduct      QuoteProduct[]
+  salesOrderProduct SalesOrderProduct[]
 }
 
 model Sale {
@@ -120,4 +127,33 @@ model QuoteProduct {
   product Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([quoteId, productId])
+}
+
+model SalesOrder {
+  id               Int                 @id @default(autoincrement())
+  salesOrderNumber String              @unique // Nomor SO harus unik
+  date             DateTime // Tanggal Sales Order
+  customer         String // Nama customer
+  termOfPayment    String // Syarat pembayaran
+  subject          String // Subjek atau keterangan
+  notes            String? // Catatan opsional
+  status           String? // Status SO (misal: Pending, Completed)
+  amount           Int? // Total amount dari Sales Order
+  products         SalesOrderProduct[] // Daftar produk yang terkait dengan Sales Order
+}
+
+model SalesOrderProduct {
+  id           Int     @id @default(autoincrement())
+  salesOrderId Int
+  productId    Int
+  description  String?
+  quantity     Int
+  unit         String?
+  price        Int
+  total        Int
+
+  salesOrder SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Cascade)
+  product    Product    @relation(fields: [productId], references: [id])
+
+  @@unique([salesOrderId, productId])
 }

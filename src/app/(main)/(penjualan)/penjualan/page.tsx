@@ -1,6 +1,8 @@
 "use client";
 
+import { SkeletonRowTable } from "@/components/card/skeleton-row-table";
 import { DatePicker } from "@/components/form/DatePicker";
+import { PenjualanListTable } from "@/components/PenjualanListTable";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,6 +14,7 @@ import React, { useEffect, useState } from "react";
 export default function PenjualanPage() {
   const { setTitle } = usePageTitle();
   const [sales, setSales] = useState<Sales[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
@@ -52,7 +55,37 @@ export default function PenjualanPage() {
   useEffect(() => {
     setTitle("Faktur Penjualan");
     fetchSales();
+    setLoading(false);
   }, [setTitle]);
+
+  // const columns = [
+  //   { key: "invoiceNumber", label: "Invoice", format: (value) => value },
+  //   {
+  //     key: "date",
+  //     label: "Date",
+  //     format: (value) => new Date(value).toLocaleDateString("id-ID"),
+  //   },
+  //   { key: "customer", label: "Customer" },
+  //   { key: "subject", label: "Subject" },
+  //   {
+  //     key: "amount",
+  //     label: "Jumlah",
+  //     format: (value) => value?.toLocaleString("id-ID", { style: "decimal" }),
+  //   },
+  //   {
+  //     key: "bill",
+  //     label: "Tagihan",
+  //     format: (value) =>
+  //       value === 0 || value === null || value === undefined
+  //         ? "-"
+  //         : value.toLocaleString("id-ID", { style: "decimal" }),
+  //   },
+  //   {
+  //     key: "status",
+  //     label: "Status",
+  //     format: (value) => (value === "open" ? "Open" : "Closed"),
+  //   },
+  // ];
 
   return (
     <>
@@ -88,10 +121,42 @@ export default function PenjualanPage() {
             </div>
           </div>
 
+          {/* <PenjualanListTable
+            data={filteredData}
+            columns={columns}
+            linkBaseUrl="penjualan"
+            emptyMessage="Data kosong"
+          /> */}
+
           <div className="overflow-x-auto">
-            {filteredData.length === 0 ? (
+            {loading && (
+              <table className="min-w-full border-collapse border border-gray-300">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="border border-gray-300 p-2 w-[100px]">
+                      Invoice
+                    </th>
+                    <th className="border border-gray-300 p-2">Date</th>
+                    <th className="border border-gray-300 p-2">Customer</th>
+                    <th className="border border-gray-300 p-2">Subject</th>
+                    <th className="border border-gray-300 p-2">Jumlah</th>
+                    <th className="border border-gray-300 p-2">Tagihan</th>
+                    <th className="border border-gray-300 p-2">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <SkeletonRowTable />
+                  <SkeletonRowTable />
+                  <SkeletonRowTable />
+                  <SkeletonRowTable />
+                  <SkeletonRowTable />
+                </tbody>
+              </table>
+            )}
+            {!loading && filteredData.length === 0 && (
               <div className="text-center p-4">Data kosong</div>
-            ) : (
+            )}
+            {filteredData.length > 0 && (
               <table className="min-w-full border-collapse border border-gray-300">
                 <thead className="bg-gray-100">
                   <tr>
@@ -145,7 +210,7 @@ export default function PenjualanPage() {
                         }`}
                       >
                         {/* {payment.status.charAt(0).toUpperCase() +
-                        payment.status.slice(1)} */}
+                          payment.status.slice(1)} */}
                       </td>
                     </tr>
                   ))}

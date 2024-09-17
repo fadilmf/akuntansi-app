@@ -1,5 +1,6 @@
 "use client";
 
+import { ProductListForm } from "@/components/ProductListForm";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -367,139 +368,14 @@ export default function FormulirPenjualanPage() {
               </div>
             </div>
 
-            <div className="mt-4">
-              <Label>Produk</Label>
-              <div className="overflow-x-auto">
-                <table className="min-w-full border-collapse border border-gray-300 mt-2">
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th className="border border-gray-300 p-2">Produk</th>
-                      <th className="border border-gray-300 p-2">Deskripsi</th>
-                      <th className="border border-gray-300 p-2">Qty</th>
-                      <th className="border border-gray-300 p-2">Satuan</th>
-                      <th className="border border-gray-300 p-2">Harga</th>
-                      <th className="border border-gray-300 p-2">Total</th>
-                      <th className="border border-gray-300 p-2"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {productList.map((product, index) => (
-                      <tr key={index}>
-                        <td className="border border-gray-300 p-2">
-                          <Select
-                            onValueChange={(value) => {
-                              const selectedProductId = parseInt(value, 10); // Pastikan value di-convert ke number
-                              const selectedProduct = availableProducts.find(
-                                (p) => p.id === selectedProductId
-                              );
-                              if (selectedProduct) {
-                                handleChange(
-                                  index,
-                                  "productId",
-                                  selectedProduct.id
-                                );
-                              }
-                            }}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Pilih produk" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {getAvailableProductsForSelect(index).length ===
-                              0 ? (
-                                <div className="p-2 flex flex-col justify-center items-center gap-2">
-                                  <p className="text-xs">
-                                    Tidak ada produk tersedia
-                                  </p>
-                                  <Button
-                                    variant="outline"
-                                    onClick={() =>
-                                      router.push("/produk/formulir")
-                                    }
-                                  >
-                                    Tambah Produk Baru
-                                  </Button>
-                                </div>
-                              ) : (
-                                getAvailableProductsForSelect(index).map(
-                                  (product) => (
-                                    <SelectItem
-                                      key={product.id}
-                                      value={product.id.toString()}
-                                    >
-                                      {product.name}
-                                    </SelectItem>
-                                  )
-                                )
-                              )}
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          <Input
-                            placeholder="Deskripsi produk"
-                            value={product.description || ""}
-                            onChange={(e) =>
-                              handleChange(index, "description", e.target.value)
-                            }
-                          />
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          <Input
-                            placeholder="Qty"
-                            type="number"
-                            value={product.quantity}
-                            onChange={(e) =>
-                              handleChange(index, "quantity", e.target.value)
-                            }
-                          />
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          <Select
-                            onValueChange={(value) =>
-                              handleChange(index, "unit", value)
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Pilih satuan" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="pcs">Pcs</SelectItem>
-                              <SelectItem value="set">Set</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          <Input
-                            placeholder="Harga"
-                            type="number"
-                            value={product.price}
-                            onChange={(e) =>
-                              handleChange(index, "price", e.target.value)
-                            }
-                          />
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          {product.quantity * product.price}
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          <Button
-                            variant="destructive"
-                            onClick={() => removeProduct(index)}
-                            disabled={productList.length === 1}
-                          >
-                            Hapus
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <Button variant="link" className="mt-2" onClick={addProduct}>
-                + tambah produk
-              </Button>
-            </div>
+            <ProductListForm
+              productList={productList}
+              availableProducts={availableProducts}
+              onAddProduct={addProduct}
+              onRemoveProduct={removeProduct}
+              onProductChange={handleChange}
+            />
+
             <div className="mt-4 flex justify-between gap-20">
               <div className="">
                 <Label htmlFor="notes">Notes:</Label>
@@ -511,18 +387,12 @@ export default function FormulirPenjualanPage() {
                 />
               </div>
               <div className="grid grid-cols-2 gap-5">
-                {/* <div className="flex"> */}
                 <h1 className="font-semibold">Sub-total</h1>
                 <h1>{subTotal}</h1>
-                {/* </div> */}
-                {/* <div className="flex"> */}
                 <h1 className="font-semibold">PPN 11%</h1>
                 <h1>{ppn}</h1>
-                {/* </div> */}
-                {/* <div className="flex"> */}
                 <h1 className="font-semibold">TOTAL</h1>
                 <h1>{total}</h1>
-                {/* </div> */}
               </div>
             </div>
           </CardContent>

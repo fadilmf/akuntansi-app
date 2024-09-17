@@ -7,7 +7,6 @@ import {
   ShoppingBasket,
   User,
 } from "lucide-react";
-import React, { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,63 +15,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { ModeToggle } from "./ModeToggle";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { usePageTitle } from "@/contexts/PageTitleContext";
-import Sidebar from "./navigation/Sidebar";
-
-// export default function Navbar() {
-//   const { setTitle, title } = usePageTitle();
-//   return (
-//     <div className="border-b p-6 bg-white flex justify-between items-center">
-//       <div className="flex gap-2">
-//         <h1 className="text-xl font-bold">{title}</h1>
-//         {/* <Link href={"/penjualan"}>
-//           <Button variant={"outline"} className="flex gap-2">
-//             <ShoppingBasket />
-//             Jual
-//           </Button>
-//         </Link>
-//         <Link href={"/pembelian/tambah-pembelian"}>
-//           <Button variant={"outline"} className="flex gap-2">
-//             <ShoppingBag />
-//             Beli
-//           </Button>
-//         </Link> */}
-//       </div>
-
-//       <div className="flex gap-2">
-//         <h2 className="font-semibold">Yedi Casman -</h2>
-//         <DropdownMenu>
-//           <DropdownMenuTrigger className="flex gap-2">
-//             <span className="italic">Director</span>
-//             <ChevronDown />
-//           </DropdownMenuTrigger>
-//           <DropdownMenuContent align="end">
-//             <DropdownMenuLabel>My Account</DropdownMenuLabel>
-//             <DropdownMenuSeparator />
-//             <DropdownMenuItem>Profile</DropdownMenuItem>
-//             <DropdownMenuItem>Billing</DropdownMenuItem>
-//             <DropdownMenuItem>Team</DropdownMenuItem>
-//             <DropdownMenuItem>Subscription</DropdownMenuItem>
-//           </DropdownMenuContent>
-//         </DropdownMenu>
-//       </div>
-//     </div>
-//   );
-// }
+import { useSession, signOut } from "next-auth/react";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 export default function Navbar({ isSidebarOpen, toggleSidebar }: any) {
   const { title } = usePageTitle();
-  // const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const user = useCurrentUser();
 
   return (
-    <div className="">
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-
+    <div>
       <div
         className={`fixed top-0 border-b p-6 bg-white z-0 flex md:flex-row justify-between items-start lg:items-center transition-all duration-300 ${
           isSidebarOpen ? "hidden lg:flex lg:ml-[300px]" : "lg:ml-0 w-full"
@@ -89,10 +44,11 @@ export default function Navbar({ isSidebarOpen, toggleSidebar }: any) {
           <h1 className="text-2xl ml-2 font-bold">{title}</h1>
         </div>
         <div className="hidden md:flex gap-2 mt-4 lg:mt-0">
-          <h2 className="font-semibold">Yedi Casman -</h2>
+          <h2 className="font-semibold">{user?.name} -</h2>
           <DropdownMenu>
             <DropdownMenuTrigger className="flex gap-2">
               <span className="italic">Director</span>
+              {/* <span className="italic">{session?.user.role}</span> */}
               <ChevronDown />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -102,12 +58,7 @@ export default function Navbar({ isSidebarOpen, toggleSidebar }: any) {
               <DropdownMenuItem>Billing</DropdownMenuItem>
               <DropdownMenuItem>Team</DropdownMenuItem>
               <DropdownMenuItem>Subscription</DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={async () => {
-                  // "use server";
-                  // await signOut();
-                }}
-              >
+              <DropdownMenuItem onClick={() => signOut()}>
                 Logout
               </DropdownMenuItem>
             </DropdownMenuContent>

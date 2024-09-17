@@ -1,5 +1,6 @@
 "use client";
 
+import { ProductListForm } from "@/components/ProductListForm";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -262,12 +263,12 @@ export default function FormulirSalesOrderPage() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <Label htmlFor="invoiceNumber">Invoice No</Label>
+                <Label htmlFor="salesOrderNumber">Sales Order No.</Label>
                 <Input
-                  id="invoiceNumber"
-                  placeholder="Masukkan nomor invoice"
+                  id="salesOrderNumber"
+                  placeholder="Masukkan nomor sales order"
                   required
-                  value={form.invoiceNumber}
+                  value={form.salesOrderNumber}
                   onChange={handleFormChange}
                 />
               </div>
@@ -279,16 +280,6 @@ export default function FormulirSalesOrderPage() {
                   type="date"
                   required
                   value={form.date}
-                  onChange={handleFormChange}
-                />
-              </div>
-              <div>
-                <Label htmlFor="salesOrderNumber">Sales Order No.</Label>
-                <Input
-                  id="salesOrderNumber"
-                  placeholder="Masukkan nomor sales order"
-                  required
-                  value={form.salesOrderNumber}
                   onChange={handleFormChange}
                 />
               </div>
@@ -367,7 +358,7 @@ export default function FormulirSalesOrderPage() {
               </div>
             </div>
 
-            <div className="mt-4">
+            {/* <div className="mt-4">
               <Label>Produk</Label>
               <div className="overflow-x-auto">
                 <table className="min-w-full border-collapse border border-gray-300 mt-2">
@@ -482,7 +473,16 @@ export default function FormulirSalesOrderPage() {
               <Button variant="link" className="mt-2" onClick={addProduct}>
                 + tambah produk
               </Button>
-            </div>
+            </div> */}
+
+            <ProductListForm
+              productList={productList}
+              availableProducts={availableProducts}
+              onAddProduct={addProduct}
+              onRemoveProduct={removeProduct}
+              onProductChange={handleChange}
+            />
+
             <div className="mt-4 flex justify-between gap-20">
               <div className="">
                 <Label htmlFor="notes">Notes:</Label>

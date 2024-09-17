@@ -20,6 +20,13 @@ import { FormSuccess } from "../form-success";
 import { useState, useTransition } from "react";
 import { RegisterSchema } from "@/schemas";
 import { register } from "@/actions/register";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 export default function RegisterForm() {
   const [error, setError] = useState<string | undefined>("");
@@ -32,6 +39,7 @@ export default function RegisterForm() {
       email: "",
       password: "",
       name: "",
+      role: "USER",
     },
   });
 
@@ -51,9 +59,9 @@ export default function RegisterForm() {
     <div>
       <CardWrapper
         headerLabel="Create an account"
-        backButtonLabel="Already have an account?"
-        backButtonHref="/auth/login"
-        showSocial
+        // backButtonLabel="Already have an account?"
+        // backButtonHref="/auth/login"
+        // showSocial
       >
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -106,6 +114,31 @@ export default function RegisterForm() {
                         disabled={isPending}
                         placeholder="Your Name"
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Role</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        disabled={isPending}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="USER">User</SelectItem>
+                          <SelectItem value="ADMIN">Admin</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

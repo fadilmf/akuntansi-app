@@ -1,5 +1,6 @@
 "use client";
 
+import { SkeletonRowTable } from "@/components/card/skeleton-row-table";
 import { DatePicker } from "@/components/form/DatePicker";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -12,13 +13,14 @@ import React, { useEffect, useState } from "react";
 export default function SalesOrderPage() {
   const { setTitle } = usePageTitle();
   const [sales, setSales] = useState<Sales[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
 
-  const fetchSales = async () => {
+  const fetchSalesOrder = async () => {
     try {
-      const response = await fetch("/api/sales");
+      const response = await fetch("/api/sales-order");
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
@@ -51,7 +53,8 @@ export default function SalesOrderPage() {
 
   useEffect(() => {
     setTitle("Sales Order");
-    fetchSales();
+    fetchSalesOrder();
+    setLoading(false);
   }, [setTitle]);
 
   return (
@@ -87,72 +90,101 @@ export default function SalesOrderPage() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="min-w-full border-collapse border border-gray-300">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border border-gray-300 p-2 w-[100px]">
-                    Invoice
-                  </th>
-                  <th className="border border-gray-300 p-2">Date</th>
-                  <th className="border border-gray-300 p-2">Customer</th>
-                  <th className="border border-gray-300 p-2">Subject</th>
-                  <th className="border border-gray-300 p-2">Jumlah</th>
-                  <th className="border border-gray-300 p-2">Tagihan</th>
-                  <th className="border border-gray-300 p-2">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredData.map((payment, index) => (
-                  <tr key={index}>
-                    <td className="border border-gray-300 p-2 font-medium">
-                      <Link href={`sales-order/${payment.id}`}>
-                        {payment.salesOrderNumber}
-                      </Link>
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {new Date(payment.date).toLocaleDateString("id-ID")}
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {payment.customer}
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {payment.subject}
-                    </td>
-                    <td className="border border-gray-300 p-2 text-right">
-                      {payment.amount?.toLocaleString("id-ID", {
-                        style: "decimal",
-                      })}
-                    </td>
-                    <td className="border border-gray-300 p-2 text-right">
-                      {payment.bill === 0 ||
-                      payment.bill === null ||
-                      payment.bill === undefined
-                        ? "-"
-                        : payment.bill.toLocaleString("id-ID", {
-                            style: "decimal",
-                          })}
-                    </td>
-                    <td
-                      className={`border border-gray-300 p-2 ${
-                        payment.status === "open"
-                          ? "text-red-500"
-                          : "text-green-500"
-                      }`}
-                    >
-                      {/* {payment.status.charAt(0).toUpperCase() +
-                        payment.status.slice(1)} */}
-                    </td>
+            {loading && (
+              <table className="min-w-full border-collapse border border-gray-300">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="border border-gray-300 p-2 w-[100px]">
+                      Invoice
+                    </th>
+                    <th className="border border-gray-300 p-2">Date</th>
+                    <th className="border border-gray-300 p-2">Customer</th>
+                    <th className="border border-gray-300 p-2">Subject</th>
+                    <th className="border border-gray-300 p-2">Jumlah</th>
+                    <th className="border border-gray-300 p-2">Tagihan</th>
+                    <th className="border border-gray-300 p-2">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  <SkeletonRowTable />
+                  <SkeletonRowTable />
+                  <SkeletonRowTable />
+                  <SkeletonRowTable />
+                  <SkeletonRowTable />
+                </tbody>
+              </table>
+            )}
+            {!loading && filteredData.length === 0 && (
+              <div className="text-center p-4">Data kosong</div>
+            )}
+            {!loading && filteredData.length !== 0 && (
+              <table className="min-w-full border-collapse border border-gray-300">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="border border-gray-300 p-2 w-[100px]">
+                      Invoice
+                    </th>
+                    <th className="border border-gray-300 p-2">Date</th>
+                    <th className="border border-gray-300 p-2">Customer</th>
+                    <th className="border border-gray-300 p-2">Subject</th>
+                    <th className="border border-gray-300 p-2">Jumlah</th>
+                    <th className="border border-gray-300 p-2">Tagihan</th>
+                    <th className="border border-gray-300 p-2">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredData.map((payment, index) => (
+                    <tr key={index}>
+                      <td className="border border-gray-300 p-2 font-medium">
+                        <Link href={`sales-order/${payment.id}`}>
+                          {payment.salesOrderNumber}
+                        </Link>
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {new Date(payment.date).toLocaleDateString("id-ID")}
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {payment.customer}
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {payment.subject}
+                      </td>
+                      <td className="border border-gray-300 p-2 text-right">
+                        {payment.amount?.toLocaleString("id-ID", {
+                          style: "decimal",
+                        })}
+                      </td>
+                      <td className="border border-gray-300 p-2 text-right">
+                        {payment.bill === 0 ||
+                        payment.bill === null ||
+                        payment.bill === undefined
+                          ? "-"
+                          : payment.bill.toLocaleString("id-ID", {
+                              style: "decimal",
+                            })}
+                      </td>
+                      <td
+                        className={`border border-gray-300 p-2 ${
+                          payment.status === "open"
+                            ? "text-red-500"
+                            : "text-green-500"
+                        }`}
+                      >
+                        {/* {payment.status.charAt(0).toUpperCase() +
+                        payment.status.slice(1)} */}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </Card>
       </div>
 
       <div className="fixed bottom-5 ml-4 z-20">
         <Button className="bg-blue-500 hover:bg-blue-600">
-          <Link href={"/sales-order/formulir"}>Buat Invoice Baru</Link>
+          <Link href={"/sales-order/formulir"}>Buat Sales Order Baru</Link>
         </Button>
       </div>
 

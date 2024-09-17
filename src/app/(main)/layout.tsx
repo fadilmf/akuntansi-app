@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Fira_Sans, Inter } from "next/font/google";
 import "@/styles/globals.css";
-import Sidebar from "@/components/navigation/Sidebar";
-import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { PageTitleProvider } from "@/contexts/PageTitleContext";
 import AppLayout from "@/components/AppLayout";
+
+import { SessionProvider } from "next-auth/react";
+import { auth } from "@/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,30 +15,34 @@ export const metadata: Metadata = {
   description: "Aplikasi Akuntansi",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
-    <html lang="en">
-      {/* <body
+    <SessionProvider session={session}>
+      <html lang="en">
+        {/* <body
         className={`${inter.className} flex items-start justify-between bg-slate-50`}
       > */}
-      <body
-        className={`${inter.className} flex flex-col lg:flex-row bg-slate-50`}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
+        <body
+          className={`${inter.className} flex flex-col lg:flex-row bg-slate-50`}
         >
-          <PageTitleProvider>
-            <AppLayout>{children}</AppLayout>
-          </PageTitleProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <PageTitleProvider>
+              <AppLayout>{children}</AppLayout>
+            </PageTitleProvider>
+          </ThemeProvider>
+        </body>
+      </html>
+    </SessionProvider>
   );
 }

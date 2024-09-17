@@ -1,5 +1,6 @@
 "use client";
 
+import { ProductListForm } from "@/components/ProductListForm";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -165,37 +166,6 @@ export default function EditInvoicePage() {
       });
 
       if (response.ok) {
-        // const saleData = await response.json();
-        // const salesId = saleData.id;
-        // const invoiceId = parseInt(id);
-
-        // const cleanedProductList = productList.map(
-        //   ({ product, sales, ...rest }) => ({
-        //     ...rest,
-        //     invoiceId,
-        //     salesId: salesId, // Add salesId if needed
-        //   })
-        // );
-
-        // const productResponse = await fetch("/api/sales-products", {
-        //   method: "PUT",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   body: JSON.stringify({
-        //     products: cleanedProductList,
-        //   }),
-        // });
-
-        // if (productResponse.ok) {
-        //   // Redirect or show success message
-        //   router.replace("/penjualan");
-        // } else {
-        //   const errorData = await productResponse.json();
-        //   alert(
-        //     `Failed to update products: ${errorData.error || "Unknown error"}`
-        //   );
-        // }
         router.replace("/penjualan");
       } else {
         // Handle error
@@ -391,163 +361,14 @@ export default function EditInvoicePage() {
               </div>
             </div>
 
-            <div className="mt-4">
-              <Label>Produk</Label>
-              <div className="overflow-x-auto">
-                <table className="min-w-full border-collapse border border-gray-300 mt-2">
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th className="border border-gray-300 p-2">Produk</th>
-                      <th className="border border-gray-300 p-2">Deskripsi</th>
-                      <th className="border border-gray-300 p-2">Qty</th>
-                      <th className="border border-gray-300 p-2">Satuan</th>
-                      <th className="border border-gray-300 p-2">Harga</th>
-                      <th className="border border-gray-300 p-2">Total</th>
-                      <th className="border border-gray-300 p-2"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {productList.map((product, index) => (
-                      <tr key={index}>
-                        {/* <td className="border border-gray-300 p-2">
-                          <Select
-                            onValueChange={(value) => {
-                              const selectedProductId = parseInt(value, 10); // Pastikan value di-convert ke number
-                              const selectedProduct = availableProducts.find(
-                                (p) => p.id === selectedProductId
-                              );
-                              if (selectedProduct) {
-                                handleChange(
-                                  index,
-                                  "productId",
-                                  selectedProduct.id
-                                );
-                              }
-                            }}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Pilih produk" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {availableProducts.map((product) => (
-                                <SelectItem
-                                  key={product.id}
-                                  value={product.id.toString()}
-                                >
-                                  {product.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </td> */}
-                        <td className="border border-gray-300 p-2">
-                          <Select
-                            value={product.productId.toString()}
-                            onValueChange={(value) => {
-                              const selectedProductId = parseInt(value, 10); // Pastikan value di-convert ke number
-                              const selectedProduct = availableProducts.find(
-                                (p) => p.id === selectedProductId
-                              );
-                              if (selectedProduct) {
-                                handleChange(
-                                  index,
-                                  "productId",
-                                  selectedProduct.id
-                                );
-                              }
-                            }}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Pilih produk" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {/* {availableProducts.map((product) => (
-                                <SelectItem
-                                  key={product.id}
-                                  value={product.id.toString()}
-                                >
-                                  {product.name}
-                                </SelectItem>
-                              ))} */}
-                              {getAvailableProductsForSelect(index).map(
-                                (product) => (
-                                  <SelectItem
-                                    key={product.id}
-                                    value={product.id.toString()}
-                                  >
-                                    {product.name}
-                                  </SelectItem>
-                                )
-                              )}
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          <Input
-                            placeholder="Deskripsi produk"
-                            value={product.description || ""}
-                            onChange={(e) =>
-                              handleChange(index, "description", e.target.value)
-                            }
-                          />
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          <Input
-                            placeholder="Qty"
-                            type="number"
-                            value={product.quantity}
-                            onChange={(e) =>
-                              handleChange(index, "quantity", e.target.value)
-                            }
-                          />
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          <Select
-                            value={product.unit || ""}
-                            onValueChange={(value) =>
-                              handleChange(index, "unit", value)
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Pilih satuan" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="pcs">Pcs</SelectItem>
-                              <SelectItem value="set">Set</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          <Input
-                            placeholder="Harga"
-                            type="number"
-                            value={product.price}
-                            onChange={(e) =>
-                              handleChange(index, "price", e.target.value)
-                            }
-                          />
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          {product.quantity * product.price}
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          <Button
-                            variant="destructive"
-                            onClick={() => removeProduct(index)}
-                            disabled={productList.length === 1}
-                          >
-                            Hapus
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <Button variant="link" className="mt-2" onClick={addProduct}>
-                + tambah produk
-              </Button>
-            </div>
+            <ProductListForm
+              productList={productList}
+              availableProducts={availableProducts}
+              onAddProduct={addProduct}
+              onRemoveProduct={removeProduct}
+              onProductChange={handleChange}
+            />
+
             <div className="mt-4 flex justify-between gap-20">
               <div className="">
                 <Label htmlFor="notes">Notes:</Label>

@@ -8,16 +8,16 @@ import Social from "./social";
 interface CardWrapperProps {
   children: React.ReactNode;
   headerLabel: string;
-  backButtonLabel: string;
-  backButtonHref: string;
+  // backButtonLabel: string;
+  // backButtonHref: string;
   showSocial?: Boolean;
 }
 
 export default function CardWrapper({
   children,
   headerLabel,
-  backButtonLabel,
-  backButtonHref,
+  // backButtonLabel,
+  // backButtonHref,
   showSocial,
 }: CardWrapperProps) {
   return (
@@ -31,9 +31,9 @@ export default function CardWrapper({
           <Social />
         </CardFooter>
       )}
-      <CardFooter>
+      {/* <CardFooter>
         <BackButton label={backButtonLabel} href={backButtonHref} />
-      </CardFooter>
+      </CardFooter> */}
     </Card>
   );
 }

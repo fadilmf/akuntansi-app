@@ -210,7 +210,7 @@ export const bottomMenuList = [
   {
     items: [
       {
-        link: "#",
+        link: "/pengaturan",
         text: "Pengaturan",
       },
     ],
