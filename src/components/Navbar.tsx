@@ -74,7 +74,7 @@ export default function Navbar({ isSidebarOpen, toggleSidebar }: any) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>
-                <h2 className="font-semibold">Yedi Casman</h2>
+                <h2 className="font-semibold">{user?.name}</h2>
                 <span className="italic">Director</span>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
@@ -84,6 +84,9 @@ export default function Navbar({ isSidebarOpen, toggleSidebar }: any) {
               <DropdownMenuItem>Billing</DropdownMenuItem>
               <DropdownMenuItem>Team</DropdownMenuItem>
               <DropdownMenuItem>Subscription</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => signOut()}>
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
