@@ -10,11 +10,11 @@ import { currentRole } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
-  // const role = await currentRole();
+  const accountRole = await currentRole();
 
-  // if (role !== UserRole.ADMIN) {
-  //   return { error: "Forbidden!" };
-  // }
+  if (accountRole !== UserRole.ADMIN) {
+    return { error: "Forbidden!" };
+  }
 
   const validatedFields = RegisterSchema.safeParse(values);
 
