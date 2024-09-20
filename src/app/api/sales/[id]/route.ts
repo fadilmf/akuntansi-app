@@ -149,3 +149,48 @@ export async function PUT(
     );
   }
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const id = parseInt(params.id);
+
+    // Validasi ID
+    if (isNaN(id)) {
+      return NextResponse.json({ error: "Invalid ID format" }, { status: 400 });
+    }
+
+    // Cek apakah invoice dengan ID tersebut ada
+    const existingSale = await prisma.sale.findUnique({
+      where: { id },
+      include: { products: true }, // Include produk jika ada relasi
+    });
+
+    if (!existingSale) {
+      return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
+    }
+
+    // Hapus semua produk yang terkait dengan invoice
+    await prisma.saleProduct.deleteMany({
+      where: { salesId: id },
+    });
+
+    // Hapus invoice
+    await prisma.sale.delete({
+      where: { id },
+    });
+
+    return NextResponse.json(
+      { message: `Invoice dengan ID ${id} berhasil dihapus` },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error deleting invoice:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}

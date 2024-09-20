@@ -37,3 +37,31 @@ export type SalesProduct = {
   product: Product;
   sales: Sales;
 };
+
+export type SalesOrder = {
+  id: number;
+  salesOrderNumber: string;
+  date: Date;
+  deliveryNumber: string;
+  poNumber: string;
+  customer: string;
+  termOfPayment: string;
+  invoiceReceived: string;
+  subject: string;
+  notes?: string | null;
+  amount?: number | null;
+  productList: SalesOrderProduct[];
+};
+
+export type SalesOrderProduct = {
+  id?: number;
+  salesOrderId?: number;
+  productId: number;
+  description?: string | null;
+  quantity: number;
+  unit?: string | null;
+  price: number;
+  total: number;
+  product: Product;
+  salesOrder: SalesOrder;
+};

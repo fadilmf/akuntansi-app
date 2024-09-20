@@ -66,7 +66,7 @@ model Product {
 model Sale {
   id               Int           @id @default(autoincrement())
   invoiceNumber    String
-  salesOrderNumber String
+  salesOrderNumber String        @map("sales_order_number")
   deliveryNumber   String
   poNumber         String
   date             DateTime
@@ -78,6 +78,8 @@ model Sale {
   bill             Int?
   status           String?
   products         SaleProduct[]
+
+  salesOrder SalesOrder @relation(fields: [salesOrderNumber], references: [salesOrderNumber], onDelete: Restrict)
 }
 
 model SaleProduct {
@@ -131,15 +133,19 @@ model QuoteProduct {
 
 model SalesOrder {
   id               Int                 @id @default(autoincrement())
-  salesOrderNumber String              @unique // Nomor SO harus unik
-  date             DateTime // Tanggal Sales Order
-  customer         String // Nama customer
-  termOfPayment    String // Syarat pembayaran
-  subject          String // Subjek atau keterangan
-  notes            String? // Catatan opsional
-  status           String? // Status SO (misal: Pending, Completed)
-  amount           Int? // Total amount dari Sales Order
-  products         SalesOrderProduct[] // Daftar produk yang terkait dengan Sales Order
+  salesOrderNumber String              @unique
+  date             DateTime
+  deliveryNumber   String
+  customer         String
+  poNumber         String
+  termOfPayment    String
+  invoiceReceived  String
+  subject          String
+  notes            String?
+  status           String?
+  amount           Int?
+  products         SalesOrderProduct[]
+  sale             Sale[]
 }
 
 model SalesOrderProduct {

@@ -28,6 +28,8 @@ export default function SalesOrderPage() {
       setSales(data);
     } catch (error) {
       console.error("Error fetching payments:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,7 +56,6 @@ export default function SalesOrderPage() {
   useEffect(() => {
     setTitle("Sales Order");
     fetchSalesOrder();
-    setLoading(false);
   }, [setTitle]);
 
   return (

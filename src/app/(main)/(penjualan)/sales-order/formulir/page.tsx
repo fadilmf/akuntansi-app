@@ -32,7 +32,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { usePageTitle } from "@/contexts/PageTitleContext";
 import { calculateTotal } from "@/lib/calculateTotal";
-import { Product, SalesProduct } from "@/types/types";
+import { Product, SalesOrderProduct } from "@/types/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -44,10 +44,10 @@ export default function FormulirSalesOrderPage() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [productList, setProductList] = useState<SalesProduct[]>([
+  const [productList, setProductList] = useState<any[]>([
     {
       id: 0,
-      salesId: 0,
+      salesOrderId: 0,
       productId: 0,
       description: "",
       quantity: 1,
@@ -59,33 +59,31 @@ export default function FormulirSalesOrderPage() {
         name: "",
         salesList: [],
       },
-      sales: {
+      salesOrder: {
         id: 0,
-        invoiceNumber: "",
         salesOrderNumber: "",
         deliveryNumber: "",
         poNumber: "",
         date: new Date(),
         customer: "",
         termOfPayment: "",
+        invoiceReceived: "",
         subject: "",
         notes: null,
         amount: null,
-        bill: null,
-        status: null,
         productList: [],
       },
     },
   ]);
 
   const [form, setForm] = useState({
-    invoiceNumber: "",
-    date: "",
     salesOrderNumber: "",
+    date: "",
     deliveryNumber: "",
     customer: "",
     poNumber: "",
     termOfPayment: "",
+    invoiceReceived: "",
     subject: "",
     notes: "",
     amount: 0,
@@ -113,7 +111,7 @@ export default function FormulirSalesOrderPage() {
       ...productList,
       {
         id: productList.length + 1,
-        salesId: 0,
+        salesOrderId: 0,
         productId: 0,
         description: "",
         quantity: 1,
@@ -125,20 +123,18 @@ export default function FormulirSalesOrderPage() {
           name: "",
           salesList: [],
         },
-        sales: {
+        salesOrder: {
           id: 0,
-          invoiceNumber: "",
           salesOrderNumber: "",
           deliveryNumber: "",
           poNumber: "",
           date: new Date(),
           customer: "",
           termOfPayment: "",
+          invoiceReceived: "",
           subject: "",
           notes: null,
           amount: null,
-          bill: null,
-          status: null,
           productList: [],
         },
       },
@@ -153,7 +149,7 @@ export default function FormulirSalesOrderPage() {
 
   const handleChange = (
     index: number,
-    field: keyof Omit<SalesProduct, "product" | "sales">,
+    field: keyof Omit<any, "product" | "sales">,
     value: any
   ) => {
     const newList = [...productList];
@@ -179,7 +175,8 @@ export default function FormulirSalesOrderPage() {
       setPpn(totals.ppn);
       setTotal(totals.total);
 
-      const response = await fetch("/api/sales", {
+      console.log("ini data mau dikirim: ", productList);
+      const response = await fetch("/api/sales-order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -193,36 +190,7 @@ export default function FormulirSalesOrderPage() {
       });
 
       if (response.ok) {
-        // const saleData = await response.json();
-        // const salesId = saleData.id;
-
-        // const cleanedProductList = productList.map(
-        //   ({ product, sales, id, ...rest }) => ({
-        //     ...rest,
-        //     salesId: salesId, // Add salesId if needed
-        //   })
-        // );
-
-        // const productResponse = await fetch("/api/sales-products", {
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   body: JSON.stringify({
-        //     products: cleanedProductList,
-        //   }),
-        // });
-
-        // if (productResponse.ok) {
-        //   // Redirect or show success message
-        //   router.replace("/penjualan");
-        // } else {
-        //   const errorData = await productResponse.json();
-        //   alert(
-        //     `Failed to save products: ${errorData.error || "Unknown error"}`
-        //   );
-        // }
-        router.replace("/penjualan");
+        router.replace("/sales-order");
       } else {
         const errorData = await response.json();
         alert(`Failed to save data: ${errorData.error || "Unknown error"}`);
@@ -343,8 +311,13 @@ export default function FormulirSalesOrderPage() {
                 </Select>
               </div>
               <div>
-                <Label htmlFor="invoice">Invoice diterima:</Label>
-                <Input id="invoice" placeholder="Invoice" />
+                <Label htmlFor="invoiceReceived">Invoice diterima:</Label>
+                <Input
+                  id="invoiceReceived"
+                  placeholder="Invoice"
+                  value={form.invoiceReceived}
+                  onChange={handleFormChange}
+                />
               </div>
 
               <div className="col-span-1 md:col-span-2 lg:col-span-4">

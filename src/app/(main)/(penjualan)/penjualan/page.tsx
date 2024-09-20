@@ -29,6 +29,8 @@ export default function PenjualanPage() {
       setSales(data);
     } catch (error) {
       console.error("Error fetching payments:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -55,7 +57,6 @@ export default function PenjualanPage() {
   useEffect(() => {
     setTitle("Faktur Penjualan");
     fetchSales();
-    setLoading(false);
   }, [setTitle]);
 
   // const columns = [

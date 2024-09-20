@@ -1,6 +1,7 @@
 import { SalesProduct } from "@/types/types";
 
-export function calculateTotal(productList: SalesProduct[]) {
+// export function calculateTotal(productList: SalesProduct[]) {
+export function calculateTotal(productList: any[]) {
   const subTotalValue = productList.reduce(
     (acc, product) => acc + product.quantity * product.price,
     0

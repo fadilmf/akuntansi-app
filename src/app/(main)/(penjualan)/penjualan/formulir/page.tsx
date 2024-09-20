@@ -92,6 +92,10 @@ export default function FormulirPenjualanPage() {
   });
 
   const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
+  const [availableSalesOrders, setAvailableSalesOrders] = useState<string[]>(
+    []
+  );
+
   const [subTotal, setSubTotal] = useState(0);
   const [ppn, setPpn] = useState(0);
   const [total, setTotal] = useState(0);
@@ -238,6 +242,7 @@ export default function FormulirPenjualanPage() {
       if (response.ok) {
         const data = await response.json();
         setAvailableProducts(data); // Set the fetched products to state
+        console.log(" ini data produk: ", data);
       } else {
         console.error("Failed to fetch products");
       }
@@ -246,10 +251,27 @@ export default function FormulirPenjualanPage() {
     }
   };
 
+  const fetchSalesOrders = async () => {
+    try {
+      const response = await fetch("/api/sales-order"); // Ganti dengan API yang sesuai
+      if (response.ok) {
+        const data = await response.json();
+        setAvailableSalesOrders(data); // Set Sales Orders ke state
+        console.log("ini data sale order: ", data);
+        console.log("ini available sales order: ", availableSalesOrders);
+      } else {
+        console.error("Failed to fetch sales orders");
+      }
+    } catch (error) {
+      console.error("Error fetching sales orders:", error);
+    }
+  };
+
   useEffect(() => {
     setIsLoading(true);
     setTitle("Faktur Penjualan - Formulir");
     fetchProducts();
+    fetchSalesOrders();
     calculateTotal(productList);
     setIsLoading(false);
   }, [setTitle, productList]);
@@ -285,13 +307,38 @@ export default function FormulirPenjualanPage() {
               </div>
               <div>
                 <Label htmlFor="salesOrderNumber">Sales Order No.</Label>
-                <Input
+                {/* <Input
                   id="salesOrderNumber"
                   placeholder="Masukkan nomor sales order"
                   required
                   value={form.salesOrderNumber}
                   onChange={handleFormChange}
-                />
+                /> */}
+                <Select
+                  required
+                  value={form.salesOrderNumber}
+                  onValueChange={(value) =>
+                    setForm((prevForm) => ({
+                      ...prevForm,
+                      salesOrderNumber: value,
+                    }))
+                  }
+                >
+                  <SelectTrigger id="salesOrderNumber">
+                    <SelectValue placeholder="Pilih nomor sales order" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {/* Map data sales order untuk ditampilkan di dropdown */}
+                    {availableSalesOrders.map((salesOrder) => (
+                      <SelectItem
+                        key={salesOrder.id}
+                        value={salesOrder.salesOrderNumber}
+                      >
+                        {salesOrder.salesOrderNumber}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <Label htmlFor="deliveryNumber">Pengiriman No.</Label>
